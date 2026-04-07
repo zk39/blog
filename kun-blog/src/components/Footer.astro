@@ -1,0 +1,46 @@
+---
+const year = new Date().getFullYear();
+---
+<footer>
+  <span>© {year} Kun Zhang</span>
+  <div class="footer-links">
+    <a href="https://github.com/zk39" target="_blank">GitHub</a>
+    <a href="https://twitter.com/zk39" target="_blank">Twitter</a>
+    <a href="/rss.xml">RSS</a>
+  </div>
+</footer>
+
+<style>
+  footer {
+    padding: 32px max(24px, calc((100vw - var(--max-width)) / 2));
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 20px;
+  }
+
+  .footer-links a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition);
+  }
+
+  .footer-links a:hover {
+    color: var(--accent);
+  }
+
+  @media (max-width: 640px) {
+    footer {
+      flex-direction: column;
+      gap: 12px;
+      text-align: center;
+    }
+  }
+</style>

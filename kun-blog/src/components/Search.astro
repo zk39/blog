@@ -1,0 +1,85 @@
+---
+---
+<div class="search-box">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+  <input type="text" id="search-input" placeholder="搜索文章..." autocomplete="off" />
+  <span class="shortcut">⌘K</span>
+</div>
+
+<style>
+  .search-box {
+    position: relative;
+    padding: 0 max(24px, calc((100vw - var(--max-width)) / 2));
+    margin-bottom: 16px;
+  }
+
+  .search-box svg {
+    position: absolute;
+    left: calc(max(24px, calc((100vw - var(--max-width)) / 2)) + 16px);
+    top: 50%;
+    transform: translateY(-50%);
+    width: 18px;
+    height: 18px;
+    color: var(--text-muted);
+    pointer-events: none;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 14px 16px 14px 46px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    outline: none;
+    transition: all var(--transition);
+  }
+
+  .search-box input::placeholder { color: var(--text-muted); }
+
+  .search-box input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-light);
+  }
+
+  .shortcut {
+    position: absolute;
+    right: calc(max(24px, calc((100vw - var(--max-width)) / 2)) + 14px);
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    background: var(--bg-secondary);
+    padding: 3px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    pointer-events: none;
+  }
+
+  @media (max-width: 640px) {
+    .shortcut { display: none; }
+  }
+</style>
+
+<script>
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      document.getElementById('search-input')?.focus();
+    }
+  });
+
+  document.getElementById('search-input')?.addEventListener('input', (e) => {
+    const term = (e.target as HTMLInputElement).value.toLowerCase().trim();
+    document.querySelectorAll('.post-item').forEach((el) => {
+      const text = (el as HTMLElement).dataset.search || '';
+      (el as HTMLElement).style.display = text.includes(term) ? '' : 'none';
+    });
+    const visible = document.querySelectorAll('.post-item:not([style*="display: none"])').length;
+    const noResults = document.getElementById('no-results');
+    if (noResults) noResults.style.display = visible === 0 ? 'block' : 'none';
+  });
+</script>

@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="关于 - Kun Zhang" description="About Kun Zhang">
+  <article class="about-page">
+    <h1>关于我</h1>
+    <p>Hi，我是 Kun Zhang，一名软件工程师。</p>
+    <p>我对 Web 开发、系统设计和创意编程充满热情。这个博客是我记录技术探索和生活感悟的地方。</p>
+    <h2>联系方式</h2>
+    <ul>
+      <li>GitHub: <a href="https://github.com/zk39" target="_blank">@zk39</a></li>
+      <li>Twitter: <a href="https://twitter.com/zk39" target="_blank">@zk39</a></li>
+    </ul>
+  </article>
+</Base>
+
+<style>
+  .about-page {
+    padding: 64px max(24px, calc((100vw - var(--max-width)) / 2)) 80px;
+  }
+
+  h1 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 24px;
+    letter-spacing: -0.03em;
+  }
+
+  h2 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 32px 0 12px;
+  }
+
+  p { margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary); }
+  ul { padding-left: 20px; line-height: 2; }
+  a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+</style>
