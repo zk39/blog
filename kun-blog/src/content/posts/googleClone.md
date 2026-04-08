@@ -19,7 +19,6 @@ author: Kun Z
  - GeoAPI (for checking location)
 
 ## Screenshot:
-
-![My Image](/images/g_sc.jpg "sample screenshot of google clone home page")
-
+ 
+![Images](https://portfolio-zk39.vercel.app/images/g_sc.jpg)
 This is a sample page. (I havent finished searching page's layout yet,I will post a demo once done)
