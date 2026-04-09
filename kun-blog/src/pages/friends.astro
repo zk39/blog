@@ -1,0 +1,247 @@
+---
+import Base from '../layouts/Base.astro';
+
+const friends = [
+  {
+    name: "张三的博客",
+    url: "https://example.com",
+    avatar: "https://api.dicebear.com/9.x/initials/svg?seed=ZS&backgroundColor=2563eb&textColor=ffffff",
+    description: "全栈工程师，写前端和 DevOps 相关的内容。",
+    tags: ["前端", "DevOps"],
+  },
+  {
+    name: "李四的小站",
+    url: "https://example.com",
+    avatar: "https://api.dicebear.com/9.x/initials/svg?seed=LS&backgroundColor=059669&textColor=ffffff",
+    description: "设计师 & 独立开发者，专注 UI/UX 和产品思考。",
+    tags: ["设计", "产品"],
+  },
+  {
+    name: "王克无",
+    url: "https://www.wangkewu.work.gd",
+    avatar: "https://api.dicebear.com/9.x/initials/svg?seed=%E7%8E%8B%E5%85%8B%E6%97%A0",
+    description: "喜欢折腾，最近在整理早年的互联网遗留内容，记录已消失的站点和结构。",
+    tags: ["运维","互联网探索","Devops", "Rust","Archived"],
+  },
+  {
+    name: "赵六随笔",
+    url: "https://example.com",
+    avatar: "https://api.dicebear.com/9.x/initials/svg?seed=ZL&backgroundColor=dc2626&textColor=ffffff",
+    description: "写代码也写诗，记录技术与生活的交汇。",
+    tags: ["生活", "前端"],
+  },
+];
+---
+<Base title="友链 - Kun Zhang" description="我的朋友们">
+  <section class="friends-page">
+    <div class="friends-header">
+      <h1>友链</h1>
+      <p>一些我喜欢的博客和朋友们的站点。欢迎交换友链，请通过邮件或 Twitter 联系我。</p>
+    </div>
+
+    <div class="friends-grid">
+      {friends.map((friend) => (
+        <a href={friend.url} target="_blank" rel="noopener noreferrer" class="friend-card">
+          <div class="friend-top">
+            <img src={friend.avatar} alt={friend.name} class="friend-avatar" />
+            <div class="friend-info">
+              <div class="friend-name">
+                {friend.name}
+                <svg class="link-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </div>
+              <div class="friend-url">{friend.url.replace('https://', '')}</div>
+            </div>
+          </div>
+          <p class="friend-desc">{friend.description}</p>
+          <div class="friend-tags">
+            {friend.tags.map((tag: string) => (
+              <span class="friend-tag">{tag}</span>
+            ))}
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div class="friends-cta">
+      <h2>交换友链</h2>
+      <p>如果你也有博客，欢迎跟我交换友链！请提供以下信息：</p>
+      <ul>
+        <li>站点名称</li>
+        <li>站点地址</li>
+        <li>头像链接</li>
+        <li>一句话描述</li>
+      </ul>
+      <p>发送至 <a href="mailto:your@email.com">carlzh23@gmail.com</a>  </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .friends-page {
+    padding: 64px max(24px, calc((100vw - var(--max-width)) / 2)) 80px;
+    animation: fadeIn 0.4s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .friends-header {
+    margin-bottom: 40px;
+  }
+
+  .friends-header h1 {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 12px;
+  }
+
+  .friends-header p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    max-width: 520px;
+  }
+
+  /* ═══ Card Grid ═══ */
+  .friends-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 56px;
+  }
+
+  .friend-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-card);
+    text-decoration: none;
+    color: inherit;
+    transition: all var(--transition);
+  }
+
+  .friend-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .friend-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .friend-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .friend-info {
+    min-width: 0;
+  }
+
+  .friend-name {
+    font-family: var(--font-display);
+    font-weight: 650;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .link-icon {
+    color: var(--text-muted);
+    opacity: 0;
+    transition: all var(--transition);
+    flex-shrink: 0;
+  }
+
+  .friend-card:hover .link-icon {
+    opacity: 1;
+    color: var(--accent);
+  }
+
+  .friend-url {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .friend-desc {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .friend-tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .friend-tag {
+    font-size: 0.7rem;
+    padding: 2px 10px;
+    border-radius: 12px;
+    background: var(--tag-bg);
+    color: var(--tag-text);
+    font-weight: 500;
+  }
+
+  /* ═══ CTA Section ═══ */
+  .friends-cta {
+    padding: 32px;
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius);
+    background: var(--bg-secondary);
+  }
+
+  .friends-cta h2 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+
+  .friends-cta p {
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+    line-height: 1.7;
+  }
+
+  .friends-cta ul {
+    padding-left: 20px;
+    margin-bottom: 16px;
+    color: var(--text-secondary);
+    line-height: 1.9;
+  }
+
+  .friends-cta a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (max-width: 640px) {
+    .friends-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
