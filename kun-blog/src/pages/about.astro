@@ -3,14 +3,26 @@ import Base from '../layouts/Base.astro';
 ---
 <Base title="关于 - Kun Zhang" description="About Kun Zhang">
   <article class="about-page">
-    <h1>关于我</h1>
-    <p>Hi，我是 Kun Zhang，一名软件工程师。</p>
-    <p>我对 Web 开发、系统设计和创意编程充满热情。这个博客是我记录技术探索和生活感悟的地方。</p>
-    <h2>联系方式</h2>
+
+    <h1 class="lang-zh">关于我</h1>
+    <h1 class="lang-en">About Me</h1>
+
+    <p class="lang-zh">Hi，我是张堃，一名软件工程师。</p>
+    <p class="lang-en">Hi, I'm Kun Zhang, a software engineer.</p>
+
+    <p class="lang-zh">我对 Web 开发、系统设计和创意编程充满热情。这个博客是我记录技术探索和生活感悟的地方。</p>
+    <p class="lang-en">I'm passionate about web development, system design, and creative coding. This blog is where I document technical explorations and occasional life reflections.</p>
+
+    <h2 class="lang-zh">联系方式</h2>
+    <h2 class="lang-en">Contact</h2>
+
     <ul>
+      <li class="lang-zh">微信：<span class="wechat-id">zhangkun39</span></li>
+      <li class="lang-en">WeChat: <span class="wechat-id">zhangkun39</span></li>
       <li>GitHub: <a href="https://github.com/zk39" target="_blank">@zk39</a></li>
       <li>Twitter: <a href="https://twitter.com/zk39" target="_blank">@zk39</a></li>
     </ul>
+
   </article>
 </Base>
 
@@ -35,6 +47,16 @@ import Base from '../layouts/Base.astro';
   }
 
   p { margin-bottom: 16px; line-height: 1.8; color: var(--text-secondary); }
-  ul { padding-left: 20px; line-height: 2; }
+  ul { padding-left: 20px; line-height: 2; color: var(--text-secondary); }
   a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+
+  .wechat-id {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    background: var(--bg-secondary);
+    padding: 1px 8px;
+    border-radius: 5px;
+    color: var(--text-primary);
+    user-select: all;
+  }
 </style>

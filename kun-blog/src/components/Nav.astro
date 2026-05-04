@@ -3,9 +3,14 @@
 <nav>
   <a href="/" class="nav-brand">Kun Zhang</a>
   <div class="nav-links">
-    <a href="/">文章</a>
-    <a href="/about" class="hide-mobile">关于</a>
-	 <a href="/friends" class="">友链</a>
+    <a href="/"><span class="lang-zh">文章</span><span class="lang-en">Posts</span></a>
+    <a href="/about" class="hide-mobile"><span class="lang-zh">关于</span><span class="lang-en">About</span></a>
+    <a href="/friends"><span class="lang-zh">友链</span><span class="lang-en">Friends</span></a>
+    <button class="lang-toggle" id="lang-toggle" aria-label="Switch language">
+      <span class="lang-zh-label">中</span>
+      <span class="lang-divider">/</span>
+      <span class="lang-en-label">EN</span>
+    </button>
     <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">
       <span class="theme-icon">☀️</span>
     </button>
@@ -59,6 +64,39 @@
     background: var(--bg-secondary);
   }
 
+  .lang-toggle {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    height: 38px;
+    padding: 0 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-card);
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    transition: all var(--transition);
+    margin-left: 4px;
+    letter-spacing: 0.01em;
+  }
+
+  .lang-toggle:hover {
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-sm);
+    color: var(--text-primary);
+  }
+
+  /* 当前激活语言高亮 */
+  html[data-lang="zh"] .lang-toggle .lang-zh-label { color: var(--accent); }
+  html[data-lang="en"] .lang-toggle .lang-en-label { color: var(--accent); }
+
+  .lang-divider {
+    color: var(--border);
+    margin: 0 1px;
+  }
+
   .theme-toggle {
     width: 38px;
     height: 38px;
@@ -87,15 +125,16 @@
 </style>
 
 <script>
+  // ── Theme ──────────────────────────────────────────────
   function initTheme() {
     const saved = localStorage.getItem('theme');
     const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
     const theme = saved || preferred;
     document.documentElement.setAttribute('data-theme', theme);
-    updateIcon(theme);
+    updateThemeIcon(theme);
   }
 
-  function updateIcon(theme: string) {
+  function updateThemeIcon(theme: string) {
     const icon = document.querySelector('.theme-icon');
     if (icon) icon.textContent = theme === 'light' ? '☀️' : '🌙';
   }
@@ -107,6 +146,14 @@
     const next = current === 'light' ? 'dark' : 'light';
     document.documentElement.setAttribute('data-theme', next);
     localStorage.setItem('theme', next);
-    updateIcon(next);
+    updateThemeIcon(next);
+  });
+
+  // ── Language ───────────────────────────────────────────
+  document.getElementById('lang-toggle')?.addEventListener('click', () => {
+    const current = document.documentElement.getAttribute('data-lang') || 'zh';
+    const next = current === 'zh' ? 'en' : 'zh';
+    document.documentElement.setAttribute('data-lang', next);
+    localStorage.setItem('lang', next);
   });
 </script>

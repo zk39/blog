@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Kun Zhang — Personal Homepage</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+  :root {
+    --win95-desktop: #008080;
+    --win95-gray: #c0c0c0;
+    --win95-title-dark: #000080;
+    --win95-title-light: #1084d0;
+    --win95-button-face: #dfdfdf;
+    --win95-highlight: #ffffff;
+    --win95-shadow: #808080;
+    --win95-dark-shadow: #000000;
+    --win95-window-bg: #ffffff;
+    --win95-selection: #000080;
+    --win95-selection-text: #ffffff;
+    --font-ui: 'Tahoma', 'Segoe UI', 'Arial', sans-serif;
+    --font-pixel: 'VT323', 'Courier New', monospace;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    background: var(--win95-desktop);
+    font-family: var(--font-ui);
+    font-size: 11px;
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  #desktop {
+    position: fixed;
+    inset: 0 0 28px 0;
+    overflow: hidden;
+  }
+
+  /* ── Desktop Icons ── */
+  .desktop-icons {
+    position: absolute;
+    top: 10px; left: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .desktop-icon {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 72px;
+    padding: 4px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    gap: 4px;
+    text-align: center;
+  }
+  .desktop-icon:hover { background: rgba(0,0,128,0.3); border-color: rgba(255,255,255,0.5); }
+  .desktop-icon.selected { background: var(--win95-selection); border: 1px dotted var(--win95-highlight); }
+  .desktop-icon.selected .icon-label { background: var(--win95-selection); color: var(--win95-selection-text); }
+  .icon-img {
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    filter: drop-shadow(1px 1px 0 rgba(0,0,0,0.5));
+  }
+  .icon-label {
+    font-size: 11px;
+    color: white;
+    text-shadow: 1px 1px 0 #000;
+    line-height: 1.2;
+    word-break: break-word;
+    max-width: 70px;
+  }
+
+  /* ── Win95 Window Base ── */
+  .win95-window {
+    position: absolute;
+    min-width: 320px;
+    min-height: 200px;
+    background: var(--win95-gray);
+    border: 2px solid;
+    border-color: var(--win95-highlight) var(--win95-dark-shadow) var(--win95-dark-shadow) var(--win95-highlight);
+    box-shadow: 2px 2px 0 var(--win95-dark-shadow);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+  }
+  .win95-window.maximized {
+    position: fixed !important;
+    inset: 0 0 28px 0 !important;
+    width: auto !important;
+    height: auto !important;
+    min-width: unset !important;
+    border: none;
+    box-shadow: none;
+    z-index: 500;
+  }
+  .win95-window.active { z-index: 200; }
+
+  /* Title Bar */
+  .win95-titlebar {
+    background: linear-gradient(90deg, var(--win95-title-dark) 0%, var(--win95-title-light) 100%);
+    color: white;
+    font-weight: bold;
+    font-size: 11px;
+    padding: 3px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    cursor: move;
+  }
+  .win95-window:not(.active) .win95-titlebar {
+    background: linear-gradient(90deg, #808080 0%, #b5b5b5 100%);
+  }
+  .win95-title-left { display: flex; align-items: center; gap: 4px; overflow: hidden; flex: 1; }
+  .win95-title-icon { font-size: 14px; flex-shrink: 0; }
+  .win95-title-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .win95-controls { display: flex; gap: 2px; flex-shrink: 0; }
+  .win95-control-btn {
+    width: 16px; height: 14px;
+    background: var(--win95-gray);
+    border: none;
+    font-size: 9px;
+    line-height: 1;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer;
+    color: black;
+    box-shadow:
+      inset -1px -1px 0 var(--win95-dark-shadow),
+      inset 1px 1px 0 var(--win95-highlight),
+      inset -2px -2px 0 var(--win95-shadow),
+      inset 2px 2px 0 var(--win95-button-face);
+  }
+  .win95-control-btn:active {
+    box-shadow: inset 1px 1px 0 var(--win95-dark-shadow), inset -1px -1px 0 var(--win95-highlight);
+  }
+
+  /* Menu Bar */
+  .win95-menubar {
+    display: flex;
+    background: var(--win95-gray);
+    border-bottom: 1px solid var(--win95-shadow);
+    padding: 1px 2px;
+    flex-shrink: 0;
+  }
+  .win95-menu-item { padding: 2px 8px; cursor: pointer; font-size: 11px; }
+  .win95-menu-item:hover { background: var(--win95-selection); color: white; }
+
+  /* Content */
+  .win95-content {
+    background: var(--win95-window-bg);
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 16px;
+    border: 2px solid;
+    border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow);
+    margin: 2px;
+  }
+
+  /* Status Bar */
+  .win95-statusbar {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 4px;
+    flex-shrink: 0;
+    font-size: 11px;
+  }
+  .win95-statusbar-pane {
+    border: 1px solid;
+    border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow);
+    padding: 1px 6px;
+    flex: 1;
+  }
+
+  /* ── 3D Button (reusable) ── */
+  .btn95 {
+    background: var(--win95-gray);
+    border: none;
+    cursor: pointer;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    color: black;
+    box-shadow:
+      inset -1px -1px 0 var(--win95-dark-shadow),
+      inset 1px 1px 0 var(--win95-highlight),
+      inset -2px -2px 0 var(--win95-shadow),
+      inset 2px 2px 0 var(--win95-button-face);
+  }
+  .btn95:active {
+    box-shadow: inset 1px 1px 0 var(--win95-dark-shadow), inset -1px -1px 0 var(--win95-highlight);
+  }
+  .btn95:disabled { color: var(--win95-shadow); cursor: default; }
+
+  /* ── IE Browser Window ── */
+  #win-browser {
+    top: 30px; left: 90px;
+    width: 760px; height: 560px;
+  }
+
+  /* IE Toolbar */
+  .ie-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 4px;
+    background: var(--win95-gray);
+    border-bottom: 1px solid var(--win95-shadow);
+    flex-shrink: 0;
+  }
+  .ie-nav-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2px 6px;
+    min-width: 40px;
+    font-size: 9px;
+    gap: 1px;
+    height: 40px;
+    justify-content: center;
+  }
+  .ie-nav-btn .nav-icon { font-size: 18px; line-height: 1; }
+  .ie-nav-btn .nav-label { font-size: 9px; white-space: nowrap; }
+  .ie-toolbar-sep {
+    width: 2px; height: 36px; margin: 0 2px;
+    border-left: 1px solid var(--win95-shadow);
+    border-right: 1px solid var(--win95-highlight);
+  }
+  .ie-address-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+  }
+  .ie-address-label { font-size: 11px; white-space: nowrap; flex-shrink: 0; }
+  .ie-address-bar {
+    flex: 1;
+    height: 22px;
+    padding: 2px 4px;
+    font-size: 11px;
+    font-family: var(--font-ui);
+    background: white;
+    border: 2px solid;
+    border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow);
+    outline: none;
+    user-select: text;
+    -webkit-user-select: text;
+  }
+  .ie-go-btn {
+    padding: 2px 10px;
+    height: 22px;
+    font-size: 11px;
+  }
+
+  /* IE Links Bar */
+  .ie-links-bar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 2px 4px;
+    background: var(--win95-gray);
+    border-bottom: 1px solid var(--win95-shadow);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+  }
+  .ie-links-label { font-size: 11px; margin-right: 4px; color: var(--win95-shadow); }
+  .ie-link-btn {
+    padding: 1px 8px;
+    height: 18px;
+    font-size: 11px;
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  /* IE Viewport */
+  .ie-viewport {
+    flex: 1;
+    background: white;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 2px solid;
+    border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow);
+    margin: 2px;
+    position: relative;
+  }
+
+  /* IE Status Bar */
+  .ie-statusbar {
+    display: flex;
+    align-items: center;
+    padding: 1px 4px;
+    background: var(--win95-gray);
+    border-top: 1px solid var(--win95-shadow);
+    flex-shrink: 0;
+    gap: 4px;
+  }
+  .ie-status-text {
+    flex: 1;
+    font-size: 11px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    border: 1px solid;
+    border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow);
+    padding: 1px 4px;
+  }
+  .ie-progress-bar {
+    width: 100px; height: 12px;
+    background: var(--win95-gray);
+    border: 1px solid var(--win95-shadow);
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  .ie-progress-fill {
+    height: 100%;
+    background: var(--win95-title-dark);
+    width: 0%;
+    transition: width 0.3s;
+  }
+  .ie-zone {
+    font-size: 10px;
+    border: 1px solid;
+    border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow);
+    padding: 1px 6px;
+    flex-shrink: 0;
+  }
+
+  /* ── Page Styles (inside browser) ── */
+  .page { padding: 0; font-family: var(--font-ui); font-size: 12px; color: #000; }
+
+  /* Blog Page Styles */
+  .blog-page { padding: 0; font-family: var(--font-ui); font-size: 12px; color: #000; background: #fff; }
+  .blog-header {
+    background: linear-gradient(180deg, #e8f0ff 0%, #f8f8ff 60px);
+    border-bottom: 2px solid #000080;
+    padding: 14px 20px 10px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .blog-logo-area { display: flex; align-items: center; gap: 10px; }
+  .blog-logo { font-size: 22px; }
+  .blog-title { font-size: 16px; font-weight: bold; color: #000080; letter-spacing: -0.5px; }
+  .blog-subtitle { font-size: 10px; color: #555; }
+  .blog-nav { display: flex; gap: 4px; }
+  .blog-nav-btn {
+    padding: 2px 10px; font-size: 11px; font-family: var(--font-ui);
+    background: var(--win95-gray); color: #000080; text-decoration: none;
+    border: 2px solid; border-color: var(--win95-highlight) var(--win95-dark-shadow) var(--win95-dark-shadow) var(--win95-highlight);
+    cursor: pointer;
+  }
+  .blog-nav-btn:hover { background: #000080; color: white; }
+  .blog-nav-btn:active { border-color: var(--win95-dark-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-dark-shadow); }
+
+  .blog-hero { padding: 12px 20px 8px; border-bottom: 1px solid #c0c0e0; background: #f0f4ff; }
+  .blog-hero h1 { font-size: 14px; font-weight: bold; color: #000080; margin-bottom: 3px; }
+  .blog-hero p { font-size: 11px; color: #444; line-height: 1.5; }
+
+  .blog-search-row {
+    display: flex; align-items: center; gap: 6px;
+    padding: 6px 20px; background: var(--win95-gray);
+    border-bottom: 1px solid var(--win95-shadow);
+  }
+  .blog-search-label { font-size: 11px; white-space: nowrap; }
+  .blog-search-input {
+    flex: 1; height: 20px; padding: 1px 4px; font-size: 11px; font-family: var(--font-ui);
+    background: white; border: 2px solid; border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow);
+    outline: none;
+  }
+
+  .blog-tags-row {
+    display: flex; align-items: center; gap: 4px; flex-wrap: wrap;
+    padding: 4px 20px; background: #f8f8f8; border-bottom: 1px solid #d0d0d0;
+  }
+  .blog-tag-btn {
+    padding: 1px 8px; font-size: 10px; font-family: var(--font-ui); cursor: pointer;
+    background: var(--win95-gray);
+    border: 2px solid; border-color: var(--win95-highlight) var(--win95-dark-shadow) var(--win95-dark-shadow) var(--win95-highlight);
+  }
+  .blog-tag-btn.active, .blog-tag-btn:hover { background: #000080; color: white; border-color: var(--win95-dark-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-dark-shadow); }
+
+  .blog-posts-list { padding: 8px 20px; }
+  .blog-post-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 8px 10px; margin-bottom: 6px; cursor: pointer;
+    border: 2px solid; border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow);
+    background: #f8f8ff; text-decoration: none; color: #000;
+  }
+  .blog-post-item:hover { background: #000080; color: white; border-color: var(--win95-highlight) var(--win95-dark-shadow) var(--win95-dark-shadow) var(--win95-highlight); }
+  .blog-post-item:hover .blog-post-desc { color: #c0d0ff; }
+  .blog-post-item:hover .blog-post-tag { background: #4040c0; color: white; border-color: #6060e0; }
+  .blog-post-date { font-size: 10px; color: #888; white-space: nowrap; margin-top: 1px; min-width: 42px; }
+  .blog-post-item:hover .blog-post-date { color: #c0d0ff; }
+  .blog-post-body { flex: 1; }
+  .blog-post-title { font-size: 12px; font-weight: bold; margin-bottom: 2px; }
+  .blog-post-desc { font-size: 10px; color: #555; margin-bottom: 4px; line-height: 1.4; }
+  .blog-post-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+  .blog-post-tag { font-size: 9px; padding: 0 5px; border: 1px solid #8080c0; background: #e8e8ff; color: #000080; }
+  .blog-post-arrow { font-size: 14px; align-self: center; opacity: 0.6; }
+
+  .blog-no-results { padding: 24px; text-align: center; color: #888; font-size: 11px; }
+
+  /* Blog Article Page */
+  .blog-article { padding: 16px 20px 24px; max-width: 660px; }
+  .blog-article-back {
+    display: inline-flex; align-items: center; gap: 4px; margin-bottom: 12px;
+    font-size: 11px; color: #000080; cursor: pointer; text-decoration: underline;
+  }
+  .blog-article-back:hover { color: #0000ff; }
+  .blog-article-meta { margin-bottom: 4px; font-size: 10px; color: #666; }
+  .blog-article h1 { font-size: 18px; font-weight: bold; color: #000080; margin-bottom: 6px; border-bottom: 2px solid #000080; padding-bottom: 6px; }
+  .blog-article-desc { font-size: 11px; color: #555; font-style: italic; margin-bottom: 14px; }
+  .blog-article-tags { display: flex; gap: 4px; margin-bottom: 14px; }
+  .blog-article h2 { font-size: 13px; font-weight: bold; color: #000080; margin: 14px 0 6px; border-left: 3px solid #000080; padding-left: 6px; }
+  .blog-article h3 { font-size: 12px; font-weight: bold; color: #000080; margin: 10px 0 4px; }
+  .blog-article p { font-size: 11px; line-height: 1.7; margin-bottom: 8px; color: #222; }
+  .blog-article blockquote { border-left: 3px solid #000080; background: #f0f0ff; padding: 6px 10px; margin: 8px 0; font-style: italic; font-size: 11px; color: #333; }
+  .blog-article ul, .blog-article ol { padding-left: 20px; margin-bottom: 8px; }
+  .blog-article li { font-size: 11px; line-height: 1.7; color: #222; }
+  .blog-article pre { background: #1e1e2e; color: #cdd6f4; padding: 10px 12px; font-family: 'Courier New', monospace; font-size: 10px; overflow-x: auto; margin: 8px 0; border: 1px solid #000; }
+  .blog-article code { font-family: 'Courier New', monospace; font-size: 10px; background: #e8e8ff; padding: 0 3px; border: 1px solid #c0c0e0; }
+  .blog-article pre code { background: none; border: none; padding: 0; color: inherit; }
+  .blog-article hr { border: none; border-top: 1px solid #c0c0c0; margin: 14px 0; }
+
+  /* Resume Page */
+  .resume-page { padding: 24px 30px; max-width: 700px; margin: 0 auto; }
+  .resume-header {
+    border-bottom: 3px double #000080;
+    padding-bottom: 12px;
+    margin-bottom: 16px;
+  }
+  .resume-name {
+    font-size: 26px;
+    font-weight: bold;
+    color: #000080;
+    letter-spacing: 1px;
+  }
+  .resume-title-line {
+    font-size: 13px;
+    color: #333;
+    margin: 4px 0;
+  }
+  .resume-contacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 6px;
+    font-size: 11px;
+  }
+  .resume-contact-item { display: flex; align-items: center; gap: 4px; }
+  .resume-contact-item a { color: #000080; }
+  .resume-section { margin-bottom: 18px; }
+  .resume-section-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #000080;
+    background: #e8e8e8;
+    padding: 2px 8px;
+    border-left: 4px solid #000080;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .resume-entry { margin-bottom: 10px; }
+  .resume-entry-header { display: flex; justify-content: space-between; align-items: baseline; }
+  .resume-entry-title { font-weight: bold; font-size: 12px; }
+  .resume-entry-date { font-size: 11px; color: #666; white-space: nowrap; }
+  .resume-entry-sub { font-size: 11px; color: #555; font-style: italic; margin-bottom: 4px; }
+  .resume-entry ul { padding-left: 18px; }
+  .resume-entry li { font-size: 11px; line-height: 1.7; }
+  .resume-skill-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 6px;
+  }
+  .resume-skill-chip {
+    background: #e8e8ff;
+    border: 1px solid #8080c0;
+    padding: 3px 8px;
+    font-size: 11px;
+    text-align: center;
+  }
+
+  /* External page */
+  .ext-page {
+    padding: 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+  .ext-page-icon { font-size: 48px; }
+  .ext-page-title { font-size: 18px; font-weight: bold; color: #000080; }
+  .ext-page-url { font-size: 11px; color: #666; font-family: monospace; }
+  .ext-page-msg { font-size: 12px; color: #333; max-width: 360px; line-height: 1.6; }
+  .ext-open-btn {
+    padding: 6px 20px;
+    font-size: 12px;
+    background: #000080;
+    color: white;
+    border: 2px solid;
+    border-color: #4040c0 #000040 #000040 #4040c0;
+    cursor: pointer;
+    font-family: var(--font-ui);
+    text-decoration: none;
+    display: inline-block;
+  }
+  .ext-open-btn:hover { background: #0000c0; }
+
+  /* IE Start/Home page */
+  .ie-home {
+    padding: 20px 24px;
+    background: linear-gradient(180deg, #e8f0ff 0%, white 100px);
+  }
+  .ie-home-header {
+    display: flex; align-items: center; gap: 12px;
+    border-bottom: 2px solid #000080;
+    padding-bottom: 10px;
+    margin-bottom: 16px;
+  }
+  .ie-home-logo { font-size: 32px; }
+  .ie-home-title { font-size: 20px; font-weight: bold; color: #000080; }
+  .ie-home-sub { font-size: 11px; color: #555; }
+  .ie-home-links { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .ie-home-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border: 1px solid #c0c0e0;
+    background: #f0f0ff;
+    cursor: pointer;
+    text-decoration: none;
+    color: #000080;
+  }
+  .ie-home-link:hover { background: #e0e0ff; border-color: #8080c0; }
+  .ie-home-link-icon { font-size: 20px; }
+  .ie-home-link-text { font-size: 11px; font-weight: bold; }
+  .ie-home-link-desc { font-size: 10px; color: #666; }
+
+  /* ── Taskbar ── */
+  #taskbar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 28px;
+    background: var(--win95-gray);
+    border-top: 2px solid var(--win95-highlight);
+    display: flex;
+    align-items: center;
+    padding: 2px 4px;
+    gap: 4px;
+    z-index: 1000;
+  }
+  #start-btn {
+    display: flex; align-items: center; gap: 4px;
+    padding: 2px 8px;
+    font-weight: bold; font-size: 11px;
+    height: 22px; cursor: pointer;
+  }
+  #start-btn .win-logo { font-size: 16px; }
+  #start-btn:active, #start-btn.active {
+    box-shadow: inset 1px 1px 0 var(--win95-dark-shadow), inset -1px -1px 0 var(--win95-highlight) !important;
+    padding: 3px 7px 1px 9px;
+  }
+  .taskbar-divider {
+    width: 2px; height: 22px;
+    border-left: 1px solid var(--win95-shadow);
+    border-right: 1px solid var(--win95-highlight);
+    flex-shrink: 0;
+  }
+  #taskbar-apps { display: flex; gap: 2px; flex: 1; overflow: hidden; }
+  .taskbar-app-btn {
+    display: flex; align-items: center; gap: 4px;
+    padding: 0 8px; height: 22px;
+    min-width: 80px; max-width: 140px;
+    font-size: 11px; cursor: pointer;
+    text-align: left; overflow: hidden;
+    white-space: nowrap; text-overflow: ellipsis;
+  }
+  .taskbar-app-btn.active {
+    box-shadow: inset 1px 1px 0 var(--win95-dark-shadow), inset -1px -1px 0 var(--win95-highlight) !important;
+    padding: 1px 7px 0 9px;
+  }
+  #system-tray {
+    display: flex; align-items: center; gap: 8px;
+    margin-left: auto;
+    padding: 0 6px;
+    border-left: 2px solid;
+    border-color: var(--win95-shadow) transparent transparent var(--win95-shadow);
+    height: 22px; font-size: 11px; flex-shrink: 0;
+  }
+  .tray-icon { font-size: 14px; cursor: pointer; }
+  #clock { white-space: nowrap; }
+
+  /* ── Start Menu ── */
+  #start-menu {
+    position: fixed;
+    bottom: 28px; left: 0;
+    width: 220px;
+    background: var(--win95-gray);
+    border: 2px solid;
+    border-color: var(--win95-highlight) var(--win95-dark-shadow) var(--win95-dark-shadow) var(--win95-highlight);
+    box-shadow: 2px 2px 0 var(--win95-dark-shadow);
+    z-index: 2000;
+    display: none; flex-direction: row;
+  }
+  #start-menu.visible { display: flex; }
+  .start-menu-sidebar {
+    width: 26px;
+    background: linear-gradient(to top, var(--win95-title-dark) 0%, var(--win95-title-light) 100%);
+    display: flex; align-items: flex-end;
+    padding-bottom: 6px; justify-content: center; flex-shrink: 0;
+  }
+  .start-menu-sidebar span {
+    writing-mode: vertical-rl; text-orientation: mixed;
+    transform: rotate(180deg);
+    color: white; font-weight: bold; font-size: 14px; letter-spacing: 2px;
+  }
+  .start-menu-sidebar span em { font-style: normal; font-weight: 900; }
+  .start-menu-items { flex: 1; padding: 4px 0; border-top: 1px solid var(--win95-highlight); border-left: 1px solid var(--win95-highlight); }
+  .start-menu-separator { height: 1px; background: var(--win95-shadow); margin: 3px 0; border-bottom: 1px solid var(--win95-highlight); }
+  .start-menu-item { display: flex; align-items: center; gap: 10px; padding: 5px 8px 5px 12px; font-size: 12px; cursor: pointer; }
+  .start-menu-item:hover { background: var(--win95-selection); color: var(--win95-selection-text); }
+  .start-menu-item .sm-icon { font-size: 20px; flex-shrink: 0; width: 20px; text-align: center; }
+  .start-menu-item .sm-text { line-height: 1.2; }
+  .start-menu-item .sm-text small { display: block; font-size: 9px; opacity: 0.7; }
+
+  /* ── Content Styles ── */
+  .about-card { display: flex; gap: 16px; align-items: flex-start; }
+  .avatar-frame {
+    width: 80px; height: 80px;
+    border: 2px solid; border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 48px; background: var(--win95-gray); flex-shrink: 0;
+  }
+  .about-info h1 { font-size: 16px; font-weight: bold; margin-bottom: 4px; }
+  .about-info .title-badge { display: inline-block; background: var(--win95-selection); color: white; padding: 1px 8px; font-size: 11px; margin-bottom: 8px; }
+  .about-info p { font-size: 11px; line-height: 1.6; }
+  .about-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 12px; }
+  .stat-item { border: 2px solid; border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow); padding: 6px 8px; background: var(--win95-gray); }
+  .stat-label { font-size: 9px; color: var(--win95-shadow); display: block; }
+  .stat-value { font-size: 14px; font-weight: bold; color: var(--win95-title-dark); }
+
+  .skill-section { margin-bottom: 14px; }
+  .skill-section h3 { font-size: 11px; font-weight: bold; background: var(--win95-title-dark); color: white; padding: 2px 8px; margin-bottom: 6px; }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .skill-tag { border: 2px solid; border-color: var(--win95-highlight) var(--win95-shadow) var(--win95-shadow) var(--win95-highlight); background: var(--win95-button-face); padding: 2px 8px; font-size: 11px; }
+  .skill-tag:hover { background: var(--win95-selection); color: white; border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow); }
+  .skill-bar-row { margin-bottom: 5px; }
+  .skill-bar-label { font-size: 11px; margin-bottom: 2px; display: flex; justify-content: space-between; }
+  .skill-bar-track { height: 14px; background: var(--win95-window-bg); border: 2px solid; border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow); }
+  .skill-bar-fill { height: 100%; background: linear-gradient(90deg, var(--win95-title-dark), var(--win95-title-light)); }
+
+  .project-card { border: 2px solid; border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow); padding: 10px; margin-bottom: 10px; background: var(--win95-gray); }
+  .project-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .project-icon { font-size: 20px; }
+  .project-title { font-weight: bold; font-size: 12px; }
+  .project-tag { margin-left: auto; background: var(--win95-title-dark); color: white; padding: 1px 6px; font-size: 9px; }
+  .project-desc { font-size: 11px; line-height: 1.5; margin-bottom: 8px; }
+  .project-tech { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px; }
+  .tech-chip { background: var(--win95-window-bg); border: 1px solid var(--win95-shadow); padding: 1px 5px; font-size: 10px; }
+
+  .contact-form { max-width: 360px; }
+  .form-group { margin-bottom: 10px; }
+  .form-label { display: block; font-size: 11px; margin-bottom: 3px; }
+  .form-input, .form-textarea {
+    width: 100%; padding: 3px 5px; font-size: 11px; font-family: var(--font-ui);
+    background: white; border: 2px solid; border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow);
+    outline: none; user-select: text; -webkit-user-select: text;
+  }
+  .form-input:focus, .form-textarea:focus { border-color: var(--win95-title-dark) var(--win95-highlight) var(--win95-highlight) var(--win95-title-dark); }
+  .form-textarea { height: 70px; resize: none; }
+  .form-submit {
+    padding: 4px 20px; font-size: 11px; font-family: var(--font-ui);
+    outline: 1px dotted var(--win95-dark-shadow); outline-offset: -4px;
+  }
+  .form-submit:active { padding: 5px 19px 3px 21px; }
+  .contact-links { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+  .contact-link-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border: 2px solid; border-color: var(--win95-shadow) var(--win95-highlight) var(--win95-highlight) var(--win95-shadow); background: var(--win95-gray); cursor: pointer; font-size: 11px; text-decoration: none; color: black; }
+  .contact-link-item:hover { background: var(--win95-selection); color: white; }
+
+  /* ── Notification ── */
+  #notification {
+    position: fixed; bottom: 36px; right: 10px;
+    background: #ffffc0; border: 1px solid #000;
+    padding: 6px 10px; font-size: 11px;
+    z-index: 3000; box-shadow: 2px 2px 0 #000;
+    display: none; max-width: 220px;
+  }
+
+  /* ── Mobile ── */
+  @media (max-width: 640px) {
+    #desktop { inset: 0 0 48px 0; }
+    .desktop-icons { flex-direction: row; flex-wrap: wrap; top: 8px; left: 8px; right: 8px; gap: 4px; }
+    .desktop-icon { width: 60px; }
+    #taskbar { height: 48px; padding: 4px 6px; }
+    #start-btn { height: 36px; padding: 4px 10px; font-size: 13px; }
+    #start-btn .win-logo { font-size: 20px; }
+    .taskbar-app-btn { height: 36px; min-width: 60px; }
+    #clock { font-size: 12px; }
+    .tray-icon { font-size: 18px; }
+    #start-menu { bottom: 48px; }
+    .win95-window {
+      position: fixed !important;
+      inset: 0 0 48px 0 !important;
+      width: auto !important; height: auto !important;
+      min-width: unset !important;
+    }
+    .win95-titlebar { cursor: default; }
+    .win95-content { padding: 12px; }
+    .about-card { flex-direction: column; }
+    /* IE on mobile */
+    .ie-nav-btn .nav-label { display: none; }
+    .ie-nav-btn { min-width: 32px; padding: 2px 4px; height: 32px; }
+    .ie-nav-btn .nav-icon { font-size: 16px; }
+    .ie-links-bar { display: none; }
+    #win-browser { top: 0; left: 0; width: 100%; height: 100%; }
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 16px; }
+  ::-webkit-scrollbar-track { background: var(--win95-gray); border-left: 1px solid var(--win95-shadow); }
+  ::-webkit-scrollbar-thumb { background: var(--win95-gray); border: 2px solid; border-color: var(--win95-highlight) var(--win95-dark-shadow) var(--win95-dark-shadow) var(--win95-highlight); }
+  ::-webkit-scrollbar-button { background: var(--win95-gray); border: 2px solid; border-color: var(--win95-highlight) var(--win95-dark-shadow) var(--win95-dark-shadow) var(--win95-highlight); height: 16px; }
+</style>
+</head>
+<body>
+
+<div id="desktop">
+  <!-- Desktop Icons -->
+  <div class="desktop-icons">
+    <div class="desktop-icon" ondblclick="openWindow('about')" onclick="selectIcon(this)">
+      <div class="icon-img">👤</div>
+      <span class="icon-label">About Me</span>
+    </div>
+    <div class="desktop-icon" ondblclick="openWindow('browser');browserNavigate('resume://local/resume.htm')" onclick="selectIcon(this)">
+      <div class="icon-img">📄</div>
+      <span class="icon-label">My Resume</span>
+    </div>
+    <div class="desktop-icon" ondblclick="openWindow('skills')" onclick="selectIcon(this)">
+      <div class="icon-img">⚡</div>
+      <span class="icon-label">Skills</span>
+    </div>
+    <div class="desktop-icon" ondblclick="openWindow('projects')" onclick="selectIcon(this)">
+      <div class="icon-img">🗂️</div>
+      <span class="icon-label">Projects</span>
+    </div>
+    <div class="desktop-icon" ondblclick="openWindow('contact')" onclick="selectIcon(this)">
+      <div class="icon-img">📧</div>
+      <span class="icon-label">Contact</span>
+    </div>
+    <div class="desktop-icon" ondblclick="openWindow('browser');browserNavigate('blog://home')" onclick="selectIcon(this)">
+      <div class="icon-img">📝</div>
+      <span class="icon-label">My Blog</span>
+    </div>
+    <div class="desktop-icon" ondblclick="openWindow('browser')" onclick="selectIcon(this)">
+      <div class="icon-img">🌐</div>
+      <span class="icon-label">Internet Explorer</span>
+    </div>
+  </div>
+
+  <!-- ══ Internet Explorer Window ══ -->
+  <div id="win-browser" class="win95-window" style="display:none;">
+    <div class="win95-titlebar" onmousedown="startDrag(event,'win-browser')">
+      <div class="win95-title-left">
+        <span class="win95-title-icon">🌐</span>
+        <span class="win95-title-text" id="ie-title">KunOS Internet Explorer</span>
+      </div>
+      <div class="win95-controls">
+        <button class="win95-control-btn" onclick="minimizeWindow('win-browser')">_</button>
+        <button class="win95-control-btn" onclick="maximizeWindow('win-browser')">□</button>
+        <button class="win95-control-btn" onclick="closeWindow('win-browser')" style="font-weight:bold;">×</button>
+      </div>
+    </div>
+
+    <!-- Menu bar -->
+    <div class="win95-menubar">
+      <span class="win95-menu-item">File</span>
+      <span class="win95-menu-item">Edit</span>
+      <span class="win95-menu-item">View</span>
+      <span class="win95-menu-item">Favorites</span>
+      <span class="win95-menu-item">Tools</span>
+      <span class="win95-menu-item">Help</span>
+    </div>
+
+    <!-- Nav Toolbar -->
+    <div class="ie-toolbar">
+      <button class="btn95 ie-nav-btn" id="ie-back" onclick="browserBack()" disabled>
+        <span class="nav-icon">◀</span>
+        <span class="nav-label">Back</span>
+      </button>
+      <button class="btn95 ie-nav-btn" id="ie-forward" onclick="browserForward()" disabled>
+        <span class="nav-icon">▶</span>
+        <span class="nav-label">Forward</span>
+      </button>
+      <button class="btn95 ie-nav-btn" id="ie-stop" onclick="browserStop()" disabled>
+        <span class="nav-icon">⏹</span>
+        <span class="nav-label">Stop</span>
+      </button>
+      <button class="btn95 ie-nav-btn" onclick="browserRefresh()">
+        <span class="nav-icon">🔄</span>
+        <span class="nav-label">Refresh</span>
+      </button>
+      <button class="btn95 ie-nav-btn" onclick="browserNavigate('home://start')">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Home</span>
+      </button>
+      <div class="ie-toolbar-sep"></div>
+      <div class="ie-address-row">
+        <span class="ie-address-label">Address</span>
+        <input class="ie-address-bar" id="ie-address" type="text" value="home://start"
+          onkeydown="if(event.key==='Enter') browserNavigate(this.value)">
+        <button class="btn95 ie-go-btn" onclick="browserNavigate(document.getElementById('ie-address').value)">Go</button>
+      </div>
+    </div>
+
+    <!-- Favorites / Links Bar -->
+    <div class="ie-links-bar">
+      <span class="ie-links-label">Links:</span>
+      <button class="btn95 ie-link-btn" onclick="browserNavigate('resume://local/resume.htm')">📄 My Resume</button>
+      <button class="btn95 ie-link-btn" onclick="browserNavigate('blog://home')">📝 My Blog</button>
+      <button class="btn95 ie-link-btn" onclick="browserNavigate('http://github.com/zk39')">🐙 GitHub</button>
+    </div>
+
+    <!-- Viewport -->
+    <div class="ie-viewport" id="ie-viewport"></div>
+
+    <!-- Status Bar -->
+    <div class="ie-statusbar">
+      <div class="ie-status-text" id="ie-status">Done</div>
+      <div class="ie-progress-bar"><div class="ie-progress-fill" id="ie-progress"></div></div>
+      <div class="ie-zone">🌐 Internet</div>
+    </div>
+  </div>
+
+  <!-- About Window -->
+  <div id="win-about" class="win95-window" style="top:40px;left:100px;width:420px;height:320px;">
+    <div class="win95-titlebar" onmousedown="startDrag(event,'win-about')">
+      <div class="win95-title-left">
+        <span class="win95-title-icon">👤</span>
+        <span class="win95-title-text">About Me — Kun Zhang</span>
+      </div>
+      <div class="win95-controls">
+        <button class="win95-control-btn" onclick="minimizeWindow('win-about')">_</button>
+        <button class="win95-control-btn" onclick="maximizeWindow('win-about')">□</button>
+        <button class="win95-control-btn" onclick="closeWindow('win-about')" style="font-weight:bold;">×</button>
+      </div>
+    </div>
+    <div class="win95-menubar">
+      <span class="win95-menu-item">File</span>
+      <span class="win95-menu-item">View</span>
+      <span class="win95-menu-item">Help</span>
+    </div>
+    <div class="win95-content">
+      <div class="about-card">
+        <div class="avatar-frame">👨‍💻</div>
+        <div class="about-info">
+          <h1>Kun Zhang</h1>
+          <span class="title-badge">Full-Stack Developer</span>
+          <p>热爱构建优雅的产品体验，擅长从 0 到 1 打造 Web 应用。喜欢把复杂问题变成简洁方案，偶尔也写写复古风格的 UI。</p>
+        </div>
+      </div>
+      <div class="about-stats">
+        <div class="stat-item"><span class="stat-label">Experience</span><span class="stat-value">5+ yrs</span></div>
+        <div class="stat-item"><span class="stat-label">Projects Shipped</span><span class="stat-value">30+</span></div>
+        <div class="stat-item"><span class="stat-label">Location</span><span class="stat-value" style="font-size:11px;">Shanghai 🇨🇳</span></div>
+        <div class="stat-item"><span class="stat-label">Status</span><span class="stat-value" style="font-size:11px;color:#008000;">● Open</span></div>
+      </div>
+    </div>
+    <div class="win95-statusbar">
+      <div class="win95-statusbar-pane">carlzh23@gmail.com</div>
+    </div>
+  </div>
+
+  <!-- Skills Window -->
+  <div id="win-skills" class="win95-window" style="top:60px;left:540px;width:380px;height:420px;display:none;">
+    <div class="win95-titlebar" onmousedown="startDrag(event,'win-skills')">
+      <div class="win95-title-left">
+        <span class="win95-title-icon">⚡</span>
+        <span class="win95-title-text">Skills — C:\Resume\Skills</span>
+      </div>
+      <div class="win95-controls">
+        <button class="win95-control-btn" onclick="minimizeWindow('win-skills')">_</button>
+        <button class="win95-control-btn" onclick="maximizeWindow('win-skills')">□</button>
+        <button class="win95-control-btn" onclick="closeWindow('win-skills')" style="font-weight:bold;">×</button>
+      </div>
+    </div>
+    <div class="win95-menubar"><span class="win95-menu-item">File</span><span class="win95-menu-item">Sort</span></div>
+    <div class="win95-content">
+      <div class="skill-section">
+        <h3>🖥 Languages</h3>
+        <div class="skill-bar-row">
+          <div class="skill-bar-label"><span>TypeScript / JavaScript</span><span>95%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:95%"></div></div>
+        </div>
+        <div class="skill-bar-row">
+          <div class="skill-bar-label"><span>Python</span><span>85%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:85%"></div></div>
+        </div>
+        <div class="skill-bar-row">
+          <div class="skill-bar-label"><span>Go</span><span>70%</span></div>
+          <div class="skill-bar-track"><div class="skill-bar-fill" style="width:70%"></div></div>
+        </div>
+      </div>
+      <div class="skill-section">
+        <h3>⚙️ Frontend</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">React</span><span class="skill-tag">Next.js</span>
+          <span class="skill-tag">Vue 3</span><span class="skill-tag">Tailwind CSS</span>
+          <span class="skill-tag">Svelte</span><span class="skill-tag">WebGL</span>
+        </div>
+      </div>
+      <div class="skill-section">
+        <h3>🔧 Backend</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">Node.js</span><span class="skill-tag">FastAPI</span>
+          <span class="skill-tag">PostgreSQL</span><span class="skill-tag">Redis</span>
+          <span class="skill-tag">Docker</span><span class="skill-tag">AWS</span>
+        </div>
+      </div>
+      <div class="skill-section">
+        <h3>🤖 AI / ML</h3>
+        <div class="skill-tags">
+          <span class="skill-tag">LangChain</span><span class="skill-tag">OpenAI API</span>
+          <span class="skill-tag">Claude API</span><span class="skill-tag">RAG</span>
+          <span class="skill-tag">Fine-tuning</span>
+        </div>
+      </div>
+    </div>
+    <div class="win95-statusbar"><div class="win95-statusbar-pane">15 items</div></div>
+  </div>
+
+  <!-- Projects Window -->
+  <div id="win-projects" class="win95-window" style="top:200px;left:130px;width:460px;height:440px;display:none;">
+    <div class="win95-titlebar" onmousedown="startDrag(event,'win-projects')">
+      <div class="win95-title-left">
+        <span class="win95-title-icon">🗂️</span>
+        <span class="win95-title-text">Projects — My Portfolio</span>
+      </div>
+      <div class="win95-controls">
+        <button class="win95-control-btn" onclick="minimizeWindow('win-projects')">_</button>
+        <button class="win95-control-btn" onclick="maximizeWindow('win-projects')">□</button>
+        <button class="win95-control-btn" onclick="closeWindow('win-projects')" style="font-weight:bold;">×</button>
+      </div>
+    </div>
+    <div class="win95-menubar"><span class="win95-menu-item">File</span><span class="win95-menu-item">View</span></div>
+    <div class="win95-content">
+      <div class="project-card">
+        <div class="project-header"><span class="project-icon">🤖</span><span class="project-title">AI Document Analyzer</span><span class="project-tag">2024</span></div>
+        <p class="project-desc">基于 RAG 架构的智能文档问答系统，支持 PDF / Word 上传，自动分块、向量检索，用自然语言查询文档内容。</p>
+        <div class="project-tech"><span class="tech-chip">Next.js</span><span class="tech-chip">Claude API</span><span class="tech-chip">Pinecone</span><span class="tech-chip">FastAPI</span></div>
+        <button class="btn95" style="padding:3px 10px;" onclick="openWindow('browser');browserNavigate('http://github.com/zk39')">📁 View on GitHub</button>
+      </div>
+      <div class="project-card">
+        <div class="project-header"><span class="project-icon">📊</span><span class="project-title">Real-time Analytics Dashboard</span><span class="project-tag">2024</span></div>
+        <p class="project-desc">实时数据可视化平台，支持多数据源接入，WebSocket 推送，自定义图表布局，每日处理 10M+ 事件。</p>
+        <div class="project-tech"><span class="tech-chip">React</span><span class="tech-chip">Go</span><span class="tech-chip">ClickHouse</span><span class="tech-chip">WebSocket</span></div>
+        <button class="btn95" style="padding:3px 10px;" onclick="openWindow('browser');browserNavigate('http://github.com/zk39')">📁 View on GitHub</button>
+      </div>
+      <div class="project-card">
+        <div class="project-header"><span class="project-icon">🎮</span><span class="project-title">Win95 Portfolio (This Site!)</span><span class="project-tag">2026</span></div>
+        <p class="project-desc">用 Windows 95 美学打造的个人主页，手写 CSS 3D bevel 系统，支持窗口拖拽、Start 菜单、移动端 Pocket PC 布局。</p>
+        <div class="project-tech"><span class="tech-chip">HTML</span><span class="tech-chip">Vanilla JS</span><span class="tech-chip">CSS</span><span class="tech-chip">Win95 ♥</span></div>
+        <button class="btn95" style="padding:3px 10px;" onclick="showNotification('📎 You are already here!')">💾 Live Demo</button>
+      </div>
+    </div>
+    <div class="win95-statusbar"><div class="win95-statusbar-pane">3 objects</div></div>
+  </div>
+
+  <!-- Contact Window -->
+  <div id="win-contact" class="win95-window" style="top:80px;left:350px;width:360px;height:430px;display:none;">
+    <div class="win95-titlebar" onmousedown="startDrag(event,'win-contact')">
+      <div class="win95-title-left">
+        <span class="win95-title-icon">📧</span>
+        <span class="win95-title-text">Contact — Send Message</span>
+      </div>
+      <div class="win95-controls">
+        <button class="win95-control-btn" onclick="minimizeWindow('win-contact')">_</button>
+        <button class="win95-control-btn" onclick="maximizeWindow('win-contact')">□</button>
+        <button class="win95-control-btn" onclick="closeWindow('win-contact')" style="font-weight:bold;">×</button>
+      </div>
+    </div>
+    <div class="win95-menubar"><span class="win95-menu-item">File</span><span class="win95-menu-item">Insert</span></div>
+    <div class="win95-content">
+      <div class="contact-form">
+        <div class="form-group"><label class="form-label">Your Name:</label><input type="text" class="form-input" placeholder="Enter your name..."></div>
+        <div class="form-group"><label class="form-label">Email Address:</label><input type="email" class="form-input" placeholder="your@email.com"></div>
+        <div class="form-group"><label class="form-label">Message:</label><textarea class="form-textarea" placeholder="Type your message here..."></textarea></div>
+        <button class="btn95 form-submit" onclick="handleContactSubmit()">📨 Send Message</button>
+      </div>
+      <div class="contact-links">
+        <a class="contact-link-item" href="mailto:carlzh23@gmail.com"><span>📧</span><span>carlzh23@gmail.com</span></a>
+        <a class="contact-link-item" href="#" onclick="openWindow('browser');browserNavigate('http://github.com/zk39');return false;"><span>🐙</span><span>github.com/zk39</span></a>
+        <a class="contact-link-item" href="#" onclick="openWindow('browser');browserNavigate('http://zhangkun.dev');return false;"><span>🌍</span><span>zhangkun.dev</span></a>
+        <a class="contact-link-item" href="#" onclick="showNotification('💼 Opening LinkedIn...');return false;"><span>💼</span><span>linkedin.com/in/kunzhang</span></a>
+      </div>
+    </div>
+    <div class="win95-statusbar"><div class="win95-statusbar-pane">Ready</div></div>
+  </div>
+
+</div><!-- /desktop -->
+
+<!-- Taskbar -->
+<div id="taskbar">
+  <button id="start-btn" class="btn95" onclick="toggleStartMenu()">
+    <span class="win-logo">🪟</span>
+    <span>Start</span>
+  </button>
+  <div class="taskbar-divider"></div>
+  <div id="taskbar-apps"></div>
+  <div id="system-tray">
+    <span class="tray-icon">📶</span>
+    <span class="tray-icon">🔊</span>
+    <span id="clock">12:00</span>
+  </div>
+</div>
+
+<!-- Start Menu -->
+<div id="start-menu">
+  <div class="start-menu-sidebar"><span><em>Kun</em>OS 95</span></div>
+  <div class="start-menu-items">
+    <div class="start-menu-item" onclick="openWindow('browser');browserNavigate('resume://local/resume.htm');toggleStartMenu()">
+      <span class="sm-icon">📄</span>
+      <span class="sm-text">My Resume<small>View CV in browser</small></span>
+    </div>
+    <div class="start-menu-item" onclick="openWindow('browser');browserNavigate('blog://home');toggleStartMenu()">
+      <span class="sm-icon">📝</span>
+      <span class="sm-text">My Blog<small>文章 &amp; 写作</small></span>
+    </div>
+    <div class="start-menu-item" onclick="openWindow('browser');toggleStartMenu()">
+      <span class="sm-icon">🌐</span>
+      <span class="sm-text">Internet Explorer<small>Browse the web</small></span>
+    </div>
+    <div class="start-menu-separator"></div>
+    <div class="start-menu-item" onclick="openWindow('about');toggleStartMenu()">
+      <span class="sm-icon">👤</span>
+      <span class="sm-text">About Me<small>Personal Info</small></span>
+    </div>
+    <div class="start-menu-item" onclick="openWindow('skills');toggleStartMenu()">
+      <span class="sm-icon">⚡</span>
+      <span class="sm-text">Skills<small>Tech Stack</small></span>
+    </div>
+    <div class="start-menu-item" onclick="openWindow('projects');toggleStartMenu()">
+      <span class="sm-icon">🗂️</span>
+      <span class="sm-text">Projects<small>Portfolio</small></span>
+    </div>
+    <div class="start-menu-item" onclick="openWindow('contact');toggleStartMenu()">
+      <span class="sm-icon">📧</span>
+      <span class="sm-text">Contact<small>Get in touch</small></span>
+    </div>
+    <div class="start-menu-separator"></div>
+    <div class="start-menu-item" onclick="showNotification('⚡ Shutting down... Just kidding!');toggleStartMenu()">
+      <span class="sm-icon">🔴</span>
+      <span class="sm-text">Shut Down...</span>
+    </div>
+  </div>
+</div>
+
+<div id="notification"></div>
+
+<script>
+// ── Window Registry ──
+const windows = {
+  browser:  { id: 'win-browser',  title: '🌐 Internet Explorer', minimized: false, maximized: false },
+  about:    { id: 'win-about',    title: '👤 About Me',           minimized: false, maximized: false },
+  skills:   { id: 'win-skills',   title: '⚡ Skills',             minimized: false, maximized: false },
+  projects: { id: 'win-projects', title: '🗂️ Projects',           minimized: false, maximized: false },
+  contact:  { id: 'win-contact',  title: '📧 Contact',            minimized: false, maximized: false },
+};
+
+let activeWin = null, zCounter = 200;
+
+function openWindow(name) {
+  const w = windows[name];
+  if (!w) return;
+  const el = document.getElementById(w.id);
+  el.style.display = 'flex';
+  w.minimized = false;
+  activateWindow(w.id);
+  updateTaskbar();
+}
+
+function closeWindow(winId) {
+  const el = document.getElementById(winId);
+  el.style.display = 'none';
+  const w = Object.values(windows).find(x => x.id === winId);
+  if (w) { w.minimized = false; w.maximized = false; el.classList.remove('maximized'); }
+  updateTaskbar();
+}
+
+function minimizeWindow(winId) {
+  document.getElementById(winId).style.display = 'none';
+  const w = Object.values(windows).find(x => x.id === winId);
+  if (w) w.minimized = true;
+  updateTaskbar();
+}
+
+function maximizeWindow(winId) {
+  const el = document.getElementById(winId);
+  const w = Object.values(windows).find(x => x.id === winId);
+  if (!w) return;
+  w.maximized = !w.maximized;
+  el.classList.toggle('maximized', w.maximized);
+}
+
+function activateWindow(winId) {
+  document.querySelectorAll('.win95-window').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.taskbar-app-btn').forEach(b => b.classList.remove('active'));
+  const el = document.getElementById(winId);
+  if (el) { el.classList.add('active'); el.style.zIndex = ++zCounter; activeWin = winId; }
+  const tb = document.getElementById('tbtn-' + winId);
+  if (tb) tb.classList.add('active');
+}
+
+function updateTaskbar() {
+  const c = document.getElementById('taskbar-apps');
+  c.innerHTML = '';
+  Object.values(windows).forEach(w => {
+    const el = document.getElementById(w.id);
+    if (!el) return;
+    const visible = el.style.display !== 'none';
+    if (visible || w.minimized) {
+      const btn = document.createElement('button');
+      btn.className = 'btn95 taskbar-app-btn' + (w.id === activeWin ? ' active' : '');
+      btn.id = 'tbtn-' + w.id;
+      btn.textContent = w.title;
+      btn.onclick = () => {
+        const we = document.getElementById(w.id);
+        if (w.minimized) { we.style.display = 'flex'; w.minimized = false; activateWindow(w.id); }
+        else if (w.id === activeWin) { minimizeWindow(w.id); }
+        else { activateWindow(w.id); }
+        updateTaskbar();
+      };
+      c.appendChild(btn);
+    }
+  });
+}
+
+// ── Dragging ──
+let dragEl = null, dragOffX = 0, dragOffY = 0;
+const isMobile = () => window.innerWidth <= 640;
+
+function startDrag(e, winId) {
+  if (isMobile()) return;
+  const w = Object.values(windows).find(x => x.id === winId);
+  if (w && w.maximized) return;
+  dragEl = document.getElementById(winId);
+  activateWindow(winId); updateTaskbar();
+  const r = dragEl.getBoundingClientRect();
+  dragOffX = e.clientX - r.left; dragOffY = e.clientY - r.top;
+  e.preventDefault();
+}
+document.addEventListener('mousemove', e => {
+  if (!dragEl) return;
+  dragEl.style.left = Math.max(0, Math.min(e.clientX - dragOffX, window.innerWidth - dragEl.offsetWidth)) + 'px';
+  dragEl.style.top  = Math.max(0, Math.min(e.clientY - dragOffY, window.innerHeight - 28 - dragEl.offsetHeight)) + 'px';
+});
+document.addEventListener('mouseup', () => { dragEl = null; });
+document.addEventListener('touchmove', e => {
+  if (!dragEl) return;
+  const t = e.touches[0];
+  dragEl.style.left = Math.max(0, Math.min(t.clientX - dragOffX, window.innerWidth - dragEl.offsetWidth)) + 'px';
+  dragEl.style.top  = Math.max(0, Math.min(t.clientY - dragOffY, window.innerHeight - 28 - dragEl.offsetHeight)) + 'px';
+}, { passive: true });
+document.addEventListener('touchend', () => { dragEl = null; });
+
+document.querySelectorAll('.win95-window').forEach(el => {
+  el.addEventListener('mousedown', () => { activateWindow(el.id); updateTaskbar(); });
+});
+
+// ── Start Menu ──
+function toggleStartMenu() {
+  const m = document.getElementById('start-menu'), b = document.getElementById('start-btn');
+  const v = m.classList.toggle('visible');
+  b.classList.toggle('active', v);
+}
+document.addEventListener('click', e => {
+  const m = document.getElementById('start-menu'), b = document.getElementById('start-btn');
+  if (!m.contains(e.target) && !b.contains(e.target)) {
+    m.classList.remove('visible'); b.classList.remove('active');
+  }
+});
+
+// ── Desktop Icon Select ──
+function selectIcon(el) {
+  document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+  el.classList.add('selected');
+}
+document.getElementById('desktop').addEventListener('click', e => {
+  if (!e.target.closest('.desktop-icon'))
+    document.querySelectorAll('.desktop-icon').forEach(i => i.classList.remove('selected'));
+});
+if (isMobile()) {
+  document.querySelectorAll('.desktop-icon').forEach(icon => {
+    icon.addEventListener('click', function() {
+      const dc = this.getAttribute('ondblclick');
+      if (dc) eval(dc);
+    });
+  });
+}
+
+// ── Clock ──
+function updateClock() {
+  const n = new Date();
+  document.getElementById('clock').textContent =
+    n.getHours().toString().padStart(2,'0') + ':' + n.getMinutes().toString().padStart(2,'0');
+}
+updateClock(); setInterval(updateClock, 1000);
+
+// ── Notification ──
+let notifTimer;
+function showNotification(msg) {
+  const el = document.getElementById('notification');
+  el.textContent = msg; el.style.display = 'block';
+  clearTimeout(notifTimer);
+  notifTimer = setTimeout(() => el.style.display = 'none', 3000);
+}
+
+function handleContactSubmit() {
+  showNotification('✉️ Message sent! (Fill in your backend 😄)');
+}
+
+// ══════════════════════════════════════
+// ── Internet Explorer Engine ──
+// ══════════════════════════════════════
+
+let ieHistory = [], ieHistoryIndex = -1, ieLoading = false;
+
+const RESUME_HTML = `
+<div class="resume-page">
+  <div class="resume-header">
+    <div class="resume-name">Kun Zhang</div>
+    <div class="resume-title-line">Full-Stack Developer &amp; AI Engineer</div>
+    <div class="resume-contacts">
+      <span class="resume-contact-item">📧 <a href="mailto:carlzh23@gmail.com">carlzh23@gmail.com</a></span>
+      <span class="resume-contact-item">🐙 <a href="#" onclick="browserNavigate('http://github.com/zk39');return false;">github.com/zk39</a></span>
+      <span class="resume-contact-item">🌍 <a href="#" onclick="browserNavigate('http://zhangkun.dev');return false;">zhangkun.dev</a></span>
+      <span class="resume-contact-item">📍 Shanghai, China</span>
+    </div>
+  </div>
+
+  <div class="resume-section">
+    <div class="resume-section-title">Summary</div>
+    <p style="font-size:11px;line-height:1.7;">Full-stack developer with 5+ years building production web applications. Passionate about clean architecture, developer experience, and leveraging AI to create intelligent products. Shipped 30+ projects across startups and enterprise clients.</p>
+  </div>
+
+  <div class="resume-section">
+    <div class="resume-section-title">Experience</div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <span class="resume-entry-title">Senior Full-Stack Engineer</span>
+        <span class="resume-entry-date">2022 – Present</span>
+      </div>
+      <div class="resume-entry-sub">TechCorp Shanghai · Full-time</div>
+      <ul>
+        <li>Led architecture of a real-time analytics platform processing 10M+ daily events</li>
+        <li>Built RAG-based document intelligence system using Claude API + Pinecone</li>
+        <li>Reduced p99 API latency from 800ms to 120ms via query optimization and caching</li>
+        <li>Mentored 3 junior engineers; established code review and CI/CD practices</li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <span class="resume-entry-title">Frontend Developer</span>
+        <span class="resume-entry-date">2020 – 2022</span>
+      </div>
+      <div class="resume-entry-sub">StartupXYZ · Full-time</div>
+      <ul>
+        <li>Rebuilt SaaS dashboard in React + TypeScript, improving load time by 60%</li>
+        <li>Implemented design system used across 4 product teams</li>
+        <li>Integrated Stripe payments and Intercom support widget</li>
+      </ul>
+    </div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <span class="resume-entry-title">Freelance Developer</span>
+        <span class="resume-entry-date">2019 – 2020</span>
+      </div>
+      <div class="resume-entry-sub">Self-employed</div>
+      <ul>
+        <li>Delivered 15+ client projects including e-commerce sites and internal tools</li>
+        <li>Maintained 100% on-time delivery rate across all engagements</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="resume-section">
+    <div class="resume-section-title">Education</div>
+    <div class="resume-entry">
+      <div class="resume-entry-header">
+        <span class="resume-entry-title">B.Sc. Computer Science</span>
+        <span class="resume-entry-date">2015 – 2019</span>
+      </div>
+      <div class="resume-entry-sub">Fudan University, Shanghai</div>
+    </div>
+  </div>
+
+  <div class="resume-section">
+    <div class="resume-section-title">Skills</div>
+    <div class="resume-skill-grid">
+      <span class="resume-skill-chip">TypeScript</span>
+      <span class="resume-skill-chip">JavaScript</span>
+      <span class="resume-skill-chip">Python</span>
+      <span class="resume-skill-chip">Go</span>
+      <span class="resume-skill-chip">React / Next.js</span>
+      <span class="resume-skill-chip">Vue 3 / Nuxt</span>
+      <span class="resume-skill-chip">Node.js</span>
+      <span class="resume-skill-chip">FastAPI</span>
+      <span class="resume-skill-chip">PostgreSQL</span>
+      <span class="resume-skill-chip">Redis</span>
+      <span class="resume-skill-chip">Docker / K8s</span>
+      <span class="resume-skill-chip">AWS / GCP</span>
+      <span class="resume-skill-chip">LangChain</span>
+      <span class="resume-skill-chip">OpenAI / Claude</span>
+      <span class="resume-skill-chip">RAG Systems</span>
+      <span class="resume-skill-chip">Pinecone</span>
+    </div>
+  </div>
+</div>`;
+
+const HOME_HTML = `
+<div class="ie-home">
+  <div class="ie-home-header">
+    <span class="ie-home-logo">🌐</span>
+    <div>
+      <div class="ie-home-title">KunOS Internet Explorer 5.0</div>
+      <div class="ie-home-sub">Start Page — Customize your browsing experience</div>
+    </div>
+  </div>
+  <p style="font-size:11px;margin-bottom:12px;color:#555;">Welcome back, Kun. What would you like to explore today?</p>
+  <div class="ie-home-links">
+    <a class="ie-home-link" href="#" onclick="browserNavigate('resume://local/resume.htm');return false;">
+      <span class="ie-home-link-icon">📄</span>
+      <div><div class="ie-home-link-text">My Resume</div><div class="ie-home-link-desc">View full CV</div></div>
+    </a>
+    <a class="ie-home-link" href="#" onclick="browserNavigate('http://github.com/zk39');return false;">
+      <span class="ie-home-link-icon">🐙</span>
+      <div><div class="ie-home-link-text">GitHub</div><div class="ie-home-link-desc">github.com/zk39</div></div>
+    </a>
+    <a class="ie-home-link" href="#" onclick="browserNavigate('blog://home');return false;">
+      <span class="ie-home-link-icon">📝</span>
+      <div><div class="ie-home-link-text">My Blog</div><div class="ie-home-link-desc">文章 &amp; 写作</div></div>
+    </a>
+    <a class="ie-home-link" href="#" onclick="browserNavigate('mailto:carlzh23@gmail.com');return false;">
+      <span class="ie-home-link-icon">📧</span>
+      <div><div class="ie-home-link-text">Email Me</div><div class="ie-home-link-desc">carlzh23@gmail.com</div></div>
+    </a>
+  </div>
+</div>`;
+
+// ══════════════════════════════════════
+// ── Blog Engine ──
+// ══════════════════════════════════════
+
+const BLOG_POSTS = [
+  {
+    slug: 'migrate-blog',
+    title: '项目迁移记录',
+    description: '更新博客页面',
+    date: 'Apr 4',
+    tags: ['前端', '工具'],
+    content: `
+<h2>项目迁移记录：从 Vercel 到 GitHub + Cloudflare</h2>
+<h2>背景</h2>
+<p>之前我的项目（个人主页、博客、ARG 游戏以及模拟 OS 页面）主要部署在 Vercel，并配合一台自有服务器使用。随着项目逐渐增多，这种方式开始显得有些混乱：静态资源和后端逻辑混在一起，服务器也没有被很好地利用。</p>
+<p>这次我对整体架构做了一次整理，把"该放哪的东西"重新归位。</p>
+<hr>
+<h2>调整思路</h2>
+<p>核心其实很简单：</p>
+<blockquote>静态资源交给 CDN，服务器只负责后端和数据。</blockquote>
+<hr>
+<h2>本次调整内容</h2>
+<h3>1. 前端整体迁移</h3>
+<ul>
+  <li>所有静态项目迁移至 GitHub，并通过 Cloudflare Pages 部署</li>
+  <li>包括：个人主页、博客、ARG 游戏、模拟 OS 页面</li>
+</ul>
+<p>这样做之后，部署流程变成：<br>本地开发 → push 到 GitHub → 自动构建部署</p>
+<p>不再需要手动上传或维护服务器环境。</p>
+<hr>
+<h3>2. 主页重构为 Astro</h3>
+<ul>
+  <li>主页迁移至 Astro</li>
+  <li>采用以静态生成（SSG）为主的方式构建页面</li>
+  <li>尽可能减少客户端 JavaScript</li>
+</ul>
+<p>主要目的：提升首屏加载速度、降低不必要的客户端渲染开销、保持结构简单可维护。</p>
+<hr>
+<h3>3. 域名与访问</h3>
+<ul>
+  <li>使用 Cloudflare 统一管理域名与解析</li>
+  <li>不同项目通过子域名区分，例如：<code>yourdomain.com</code> → 主页，<code>blog.yourdomain.com</code> → 博客</li>
+</ul>
+<hr>
+<h3>4. 自有服务器重新定位</h3>
+<p>原本服务器同时承担静态资源和部分后端功能，现在做了明确拆分。</p>
+<ul>
+  <li>后端 API（后续扩展）</li>
+  <li>数据存储</li>
+  <li>项目备份</li>
+</ul>
+<hr>
+<h2>当前架构</h2>
+<pre><code>[ GitHub + Cloudflare Pages ]
+        ↓
+   静态前端（Blog / Home / ARG / OS）
+
+[ 自有服务器（Oracle Free Tier） ]
+        ↓
+   API / 数据 / 备份</code></pre>
+<hr>
+<h2>一些实际感受</h2>
+<p>这次调整之后，最大的变化是"简单了很多"。</p>
+<ul>
+  <li>前端部署几乎不用管，提交代码就自动上线</li>
+  <li>不再需要折腾服务器上的 Nginx、证书之类的东西</li>
+  <li>服务器可以专心跑真正需要它的部分</li>
+</ul>
+<hr>
+<h2>后续计划</h2>
+<ul>
+  <li>增加简单的后端 API（可能用 Rust）</li>
+  <li>给博客加评论系统</li>
+  <li>为 ARG 游戏增加进度存储或排行榜</li>
+  <li>做一套自动备份策略</li>
+</ul>
+<p>这次迁移不算复杂，但把结构理顺之后，后面开发会轻松很多。</p>
+`
+  },
+  {
+    slug: 'p1',
+    title: '用 Astro 重建我的博客',
+    description: '从 Nextra 迁移到 Astro 的过程，为什么我选择了静态优先的方案。',
+    date: 'Apr 4',
+    tags: ['前端', '工具'],
+    content: `
+<h2>为什么要迁移？</h2>
+<p>之前部署在 Vercel 和自己服务器上，一直不错，但决定将所有静态内容统一迁移，以便更好地管理和维护。</p>
+<blockquote>好的工具应该让你专注于内容，而不是跟构建系统搏斗。</blockquote>
+<h2>为什么选 Astro？</h2>
+<p>Astro 的理念很简单：默认零 JavaScript，只在需要交互的地方加。这意味着：</p>
+<ul>
+  <li>页面默认是纯 HTML，加载极快</li>
+  <li>可以在同一个项目里混用 React、Vue、Svelte 组件</li>
+  <li>内容层（Content Collections）让 Markdown 管理变得非常优雅</li>
+  <li>构建产物是纯静态文件，部署到任何 CDN 都毫无压力</li>
+</ul>
+<h2>迁移过程</h2>
+<p>从 Nextra（Next.js 文档方案）迁移到 Astro 并不复杂，主要工作量在于：</p>
+<ul>
+  <li>重写布局组件（Layout）</li>
+  <li>将 MDX 内容转换为标准 Markdown</li>
+  <li>配置 Content Collections 替代原来的 pages/ 目录管理</li>
+</ul>
+<h2>结论</h2>
+<p>如果你的博客主要是内容驱动，不需要大量客户端交互，Astro 是目前最优雅的选择。构建速度快，产物干净，心智负担低。</p>
+`
+  }
+];
+
+function getBlogHomePage() {
+  const postsHTML = BLOG_POSTS.map(post => `
+    <div class="blog-post-item" onclick="browserNavigate('blog://post/${post.slug}')" data-tags="${post.tags.join(',')}" data-search="${post.title} ${post.description} ${post.tags.join(' ')}">
+      <span class="blog-post-date">${post.date}</span>
+      <div class="blog-post-body">
+        <div class="blog-post-title">${post.title}</div>
+        <div class="blog-post-desc">${post.description}</div>
+        <div class="blog-post-tags">${post.tags.map(t => `<span class="blog-post-tag">${t}</span>`).join('')}</div>
+      </div>
+      <span class="blog-post-arrow">→</span>
+    </div>
+  `).join('');
+
+  const allTags = [...new Set(BLOG_POSTS.flatMap(p => p.tags))];
+  const tagBtns = allTags.map(t => `<button class="blog-tag-btn" data-tag="${t}" onclick="blogFilterTag(this,'${t}')">${t}<sup style="font-size:8px;">${BLOG_POSTS.filter(p=>p.tags.includes(t)).length}</sup></button>`).join('');
+
+  return `
+<div class="blog-page">
+  <div class="blog-header">
+    <div class="blog-logo-area">
+      <span class="blog-logo">📝</span>
+      <div>
+        <div class="blog-title">Kun Zhang's Blog</div>
+        <div class="blog-subtitle">Writing about web dev, design, and life.</div>
+      </div>
+    </div>
+    <div class="blog-nav">
+      <button class="blog-nav-btn" onclick="browserNavigate('blog://home')">文章</button>
+      <button class="blog-nav-btn" onclick="browserNavigate('blog://about')">关于</button>
+    </div>
+  </div>
+  <div class="blog-hero">
+    <h1>Hey, I'm Kun Zhang</h1>
+    <p>Software engineer &amp; creative thinker. Writing about web development, design patterns, and the occasional life reflection.</p>
+  </div>
+  <div class="blog-search-row">
+    <span class="blog-search-label">🔍 搜索：</span>
+    <input class="blog-search-input" id="blog-search" type="text" placeholder="搜索文章..." oninput="blogSearch(this.value)">
+  </div>
+  <div class="blog-tags-row">
+    <button class="blog-tag-btn active" data-tag="all" onclick="blogFilterTag(this,'all')">全部</button>
+    ${tagBtns}
+  </div>
+  <div class="blog-posts-list" id="blog-posts-list">
+    ${postsHTML}
+  </div>
+  <div id="blog-no-results" class="blog-no-results" style="display:none;">没有找到匹配的文章</div>
+</div>`;
+}
+
+function getBlogPost(slug) {
+  const post = BLOG_POSTS.find(p => p.slug === slug);
+  if (!post) return `<div class="blog-article"><p>文章未找到。</p></div>`;
+  return `
+<div class="blog-page">
+  <div class="blog-header">
+    <div class="blog-logo-area">
+      <span class="blog-logo">📝</span>
+      <div>
+        <div class="blog-title">Kun Zhang's Blog</div>
+        <div class="blog-subtitle">Writing about web dev, design, and life.</div>
+      </div>
+    </div>
+    <div class="blog-nav">
+      <button class="blog-nav-btn" onclick="browserNavigate('blog://home')">文章</button>
+      <button class="blog-nav-btn" onclick="browserNavigate('blog://about')">关于</button>
+    </div>
+  </div>
+  <div class="blog-article">
+    <span class="blog-article-back" onclick="browserNavigate('blog://home')">← 返回文章列表</span>
+    <div class="blog-article-meta">${post.date} · ${post.tags.join(' · ')}</div>
+    <h1>${post.title}</h1>
+    <div class="blog-article-desc">${post.description}</div>
+    <div class="blog-article-tags">${post.tags.map(t=>`<span class="blog-post-tag">${t}</span>`).join('')}</div>
+    ${post.content}
+  </div>
+</div>`;
+}
+
+function getBlogAbout() {
+  return `
+<div class="blog-page">
+  <div class="blog-header">
+    <div class="blog-logo-area">
+      <span class="blog-logo">📝</span>
+      <div>
+        <div class="blog-title">Kun Zhang's Blog</div>
+        <div class="blog-subtitle">Writing about web dev, design, and life.</div>
+      </div>
+    </div>
+    <div class="blog-nav">
+      <button class="blog-nav-btn" onclick="browserNavigate('blog://home')">文章</button>
+      <button class="blog-nav-btn active" onclick="browserNavigate('blog://about')">关于</button>
+    </div>
+  </div>
+  <div class="blog-article">
+    <h1>关于我</h1>
+    <p>Hi，我是 Kun Zhang，一名全栈开发者，目前在上海工作。</p>
+    <p>这个博客是我记录技术思考、项目总结和偶尔生活随笔的地方。写作对我来说是整理思维的方式——把混沌的想法变成有结构的文字，这个过程本身就很有价值。</p>
+    <h2>技术栈</h2>
+    <p>主要用 TypeScript / React / Next.js，后端偏向 Node.js 和 Go，近年来在 AI 工程（RAG、Claude API）上投入较多。</p>
+    <h2>联系方式</h2>
+    <ul>
+      <li>Email: <a href="mailto:carlzh23@gmail.com" style="color:#000080;">carlzh23@gmail.com</a></li>
+      <li>GitHub: github.com/zk39</li>
+      <li>Twitter: @zk39</li>
+    </ul>
+    <p style="margin-top:14px;font-size:10px;color:#888;">© 2026 Kun Zhang</p>
+  </div>
+</div>`;
+}
+
+// Blog interactive functions (injected into viewport scope via window)
+window.blogSearch = function(val) {
+  const q = val.toLowerCase().trim();
+  const items = document.querySelectorAll('#blog-posts-list .blog-post-item');
+  let visible = 0;
+  items.forEach(item => {
+    const s = (item.dataset.search || '').toLowerCase();
+    item.style.display = (!q || s.includes(q)) ? '' : 'none';
+    if (item.style.display !== 'none') visible++;
+  });
+  const nr = document.getElementById('blog-no-results');
+  if (nr) nr.style.display = visible === 0 ? 'block' : 'none';
+};
+
+window.blogFilterTag = function(btn, tag) {
+  document.querySelectorAll('.blog-tag-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const items = document.querySelectorAll('#blog-posts-list .blog-post-item');
+  let visible = 0;
+  items.forEach(item => {
+    const tags = (item.dataset.tags || '').split(',');
+    const show = tag === 'all' || tags.includes(tag);
+    item.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+  const nr = document.getElementById('blog-no-results');
+  if (nr) nr.style.display = visible === 0 ? 'block' : 'none';
+};
+
+function getExternalPage(url) {
+  const isGithub = url.includes('github.com/zk39');
+  const isBlog = url.includes('zhangkun.dev');
+  const icon = isGithub ? '🐙' : isBlog ? '🌍' : '🌐';
+  const label = isGithub ? 'GitHub Profile' : isBlog ? 'Personal Blog' : url;
+  const desc = isGithub
+    ? 'Kun\'s open-source projects and contributions at github.com/zk39'
+    : isBlog
+    ? 'Personal blog and writings at zhangkun.dev'
+    : 'External website';
+
+  return `<div class="ext-page">
+    <div class="ext-page-icon">${icon}</div>
+    <div class="ext-page-title">${label}</div>
+    <div class="ext-page-url">${url}</div>
+    <div class="ext-page-msg">${desc}<br><br>This page cannot be displayed inside the browser frame due to security restrictions. Click below to open it in a new tab.</div>
+    <a class="ext-open-btn" href="${url}" target="_blank" rel="noopener">🔗 Open in New Tab</a>
+    <div style="font-size:10px;color:#888;margin-top:8px;">Internet Explorer — Cannot display the webpage</div>
+  </div>`;
+}
+
+function browserNavigate(url) {
+  if (!url) return;
+  // Trim
+  url = url.trim();
+
+  // Add to history
+  ieHistory = ieHistory.slice(0, ieHistoryIndex + 1);
+  ieHistory.push(url);
+  ieHistoryIndex = ieHistory.length - 1;
+
+  _ieLoad(url);
+}
+
+function _ieLoad(url) {
+  const viewport = document.getElementById('ie-viewport');
+  const addrBar  = document.getElementById('ie-address');
+  const statusEl = document.getElementById('ie-status');
+  const progress = document.getElementById('ie-progress');
+  const title    = document.getElementById('ie-title');
+
+  addrBar.value = url;
+  ieLoading = true;
+  document.getElementById('ie-stop').disabled = false;
+  statusEl.textContent = 'Connecting to ' + url + '...';
+  progress.style.width = '30%';
+
+  // Update nav buttons
+  document.getElementById('ie-back').disabled    = ieHistoryIndex <= 0;
+  document.getElementById('ie-forward').disabled = ieHistoryIndex >= ieHistory.length - 1;
+
+  setTimeout(() => {
+    if (!ieLoading) return;
+    progress.style.width = '70%';
+    statusEl.textContent = 'Loading...';
+  }, 200);
+
+  setTimeout(() => {
+    if (!ieLoading) return;
+    progress.style.width = '100%';
+
+    let html = '', pageTitle = '';
+
+    if (url === 'home://start') {
+      html = HOME_HTML;
+      pageTitle = 'Start Page — KunOS Internet Explorer';
+      document.getElementById('ie-zone').textContent = '🏠 Local';
+    } else if (url.startsWith('resume://')) {
+      html = `<div class="page">${RESUME_HTML}</div>`;
+      pageTitle = 'Kun Zhang — Resume';
+      document.getElementById('ie-zone').textContent = '💾 Local';
+    } else if (url === 'blog://home') {
+      html = getBlogHomePage();
+      pageTitle = "Kun Zhang's Blog — KunOS";
+      document.getElementById('ie-zone').textContent = '📝 Local';
+    } else if (url.startsWith('blog://post/')) {
+      const slug = url.replace('blog://post/', '');
+      const post = BLOG_POSTS.find(p => p.slug === slug);
+      html = getBlogPost(slug);
+      pageTitle = (post ? post.title : slug) + ' — Blog';
+      document.getElementById('ie-zone').textContent = '📝 Local';
+    } else if (url === 'blog://about') {
+      html = getBlogAbout();
+      pageTitle = '关于我 — Kun Zhang Blog';
+      document.getElementById('ie-zone').textContent = '📝 Local';
+    } else if (url.startsWith('mailto:')) {
+      window.location.href = url;
+      statusEl.textContent = 'Opening email client...';
+      progress.style.width = '0%';
+      ieLoading = false;
+      return;
+    } else {
+      html = `<div class="page">${getExternalPage(url)}</div>`;
+      pageTitle = url + ' — KunOS Internet Explorer';
+      document.getElementById('ie-zone').textContent = '🌐 Internet';
+    }
+
+    viewport.innerHTML = html;
+    title.textContent = pageTitle;
+    statusEl.textContent = 'Done';
+    progress.style.width = '0%';
+    document.getElementById('ie-stop').disabled = true;
+    ieLoading = false;
+  }, 500);
+}
+
+function browserBack() {
+  if (ieHistoryIndex > 0) { ieHistoryIndex--; _ieLoad(ieHistory[ieHistoryIndex]); }
+}
+function browserForward() {
+  if (ieHistoryIndex < ieHistory.length - 1) { ieHistoryIndex++; _ieLoad(ieHistory[ieHistoryIndex]); }
+}
+function browserStop() {
+  ieLoading = false;
+  document.getElementById('ie-progress').style.width = '0%';
+  document.getElementById('ie-status').textContent = 'Stopped.';
+  document.getElementById('ie-stop').disabled = true;
+}
+function browserRefresh() {
+  if (ieHistory[ieHistoryIndex]) _ieLoad(ieHistory[ieHistoryIndex]);
+}
+
+// ── Init ──
+openWindow('about');
+// Load browser home page (don't open, just preload)
+browserNavigate('home://start');
+// Close browser after preload (it's hidden by default)
+setTimeout(() => {
+  const bEl = document.getElementById('win-browser');
+  if (bEl.style.display !== 'none') return; // user opened it
+}, 600);
+
+if (window.innerWidth > 640) {
+  setTimeout(() => showNotification('💡 Double-click "My Resume" to open in the browser!'), 1500);
+}
+</script>
+</body>
+</html>

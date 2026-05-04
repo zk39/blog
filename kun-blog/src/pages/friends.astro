@@ -3,13 +3,6 @@ import Base from '../layouts/Base.astro';
 
 const friends = [
   {
-    name: "张三的博客",
-    url: "https://example.com",
-    avatar: "https://api.dicebear.com/9.x/initials/svg?seed=ZS&backgroundColor=2563eb&textColor=ffffff",
-    description: "全栈工程师，写前端和 DevOps 相关的内容。",
-    tags: ["前端", "DevOps"],
-  },
-  {
     name: "三农爱好者yuxi",
     url: "https://yx-sh.github.io/",
     avatar: "https://api.dicebear.com/9.x/initials/svg?seed=YX",
@@ -23,14 +16,16 @@ const friends = [
     description: "喜欢折腾，最近在整理早年的互联网遗留内容，记录已消失的站点和结构。",
     tags: ["运维","互联网探索","Devops", "Rust","Archived"],
   },
- 
 ];
 ---
 <Base title="友链 - Kun Zhang" description="我的朋友们">
   <section class="friends-page">
+
     <div class="friends-header">
-      <h1>友链</h1>
-      <p>一些我喜欢的博客和朋友们的站点。欢迎交换友链，请通过邮件或 Twitter 联系我。</p>
+      <h1 class="lang-zh">友链</h1>
+      <h1 class="lang-en">Friends</h1>
+      <p class="lang-zh">一些我喜欢的博客和朋友们的站点。欢迎交换友链，请通过微信联系我。</p>
+      <p class="lang-en">Blogs and sites I enjoy. Feel free to reach out via WeChat if you'd like to exchange links.</p>
     </div>
 
     <div class="friends-grid">
@@ -57,16 +52,27 @@ const friends = [
     </div>
 
     <div class="friends-cta">
-      <h2>交换友链</h2>
-      <p>如果你也有博客，欢迎跟我交换友链！请提供以下信息：</p>
+      <h2 class="lang-zh">交换友链</h2>
+      <h2 class="lang-en">Link Exchange</h2>
+
+      <p class="lang-zh">如果你也有博客，欢迎跟我交换友链！请提供以下信息：</p>
+      <p class="lang-en">Got a blog? I'd love to exchange links! Please send the following:</p>
+
       <ul>
-        <li>站点名称</li>
-        <li>站点地址</li>
-        <li>头像链接</li>
-        <li>一句话描述</li>
+        <li class="lang-zh">站点名称</li>
+        <li class="lang-en">Site name</li>
+        <li class="lang-zh">站点地址</li>
+        <li class="lang-en">Site URL</li>
+        <li class="lang-zh">头像链接</li>
+        <li class="lang-en">Avatar URL</li>
+        <li class="lang-zh">一句话描述</li>
+        <li class="lang-en">A short description</li>
       </ul>
-      <p>发送至 <a href="mailto:your@email.com">carlzh23@gmail.com</a>  </p>
+
+      <p class="lang-zh">微信联系：<span class="wechat-id">zhangkun39</span>，或发送至 <a href="mailto:carlzh23@gmail.com">carlzh23@gmail.com</a></p>
+      <p class="lang-en">WeChat: <span class="wechat-id">zhangkun39</span>, or email <a href="mailto:carlzh23@gmail.com">carlzh23@gmail.com</a></p>
     </div>
+
   </section>
 </Base>
 
@@ -140,9 +146,7 @@ const friends = [
     flex-shrink: 0;
   }
 
-  .friend-info {
-    min-width: 0;
-  }
+  .friend-info { min-width: 0; }
 
   .friend-name {
     font-family: var(--font-display);
@@ -233,9 +237,17 @@ const friends = [
     text-underline-offset: 3px;
   }
 
+  .wechat-id {
+    font-family: var(--font-mono);
+    font-size: 0.92em;
+    background: var(--bg-card);
+    padding: 1px 8px;
+    border-radius: 5px;
+    color: var(--text-primary);
+    user-select: all;
+  }
+
   @media (max-width: 640px) {
-    .friends-grid {
-      grid-template-columns: 1fr;
-    }
+    .friends-grid { grid-template-columns: 1fr; }
   }
 </style>

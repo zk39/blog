@@ -1,17 +1,24 @@
 ---
 import Base from './Base.astro';
 
-interface Props {
-  frontmatter: {
-    title: string;
-    description: string;
-    date: Date;
-    tags: string[];
-  };
+interface Frontmatter {
+  title: string;
+  description: string;
+  date: Date;
+  tags: string[];
 }
 
-const { frontmatter } = Astro.props;
-const dateStr = new Date(frontmatter.date).toLocaleDateString('zh-CN', {
+interface Props {
+  frontmatter: Frontmatter;
+  frontmatterEn?: Frontmatter | null;
+}
+
+const { frontmatter, frontmatterEn } = Astro.props;
+
+const dateZh = new Date(frontmatter.date).toLocaleDateString('zh-CN', {
+  year: 'numeric', month: 'long', day: 'numeric'
+});
+const dateEn = new Date(frontmatter.date).toLocaleDateString('en-US', {
   year: 'numeric', month: 'long', day: 'numeric'
 });
 ---
@@ -19,21 +26,28 @@ const dateStr = new Date(frontmatter.date).toLocaleDateString('zh-CN', {
   <article class="article-view">
     <a href="/" class="article-back">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-      返回文章列表
+      <span class="lang-zh">返回文章列表</span>
+      <span class="lang-en">Back to posts</span>
     </a>
     <div class="article-header">
-      <h1>{frontmatter.title}</h1>
+      <h1 class="lang-zh">{frontmatter.title}</h1>
+      <h1 class="lang-en">{frontmatterEn ? frontmatterEn.title : frontmatter.title}</h1>
       <div class="article-meta">
-        <time>{dateStr}</time>
+        <time class="lang-zh">{dateZh}</time>
+        <time class="lang-en">{dateEn}</time>
         <div class="post-tags">
           {frontmatter.tags.map((tag: string) => (
-            <span class="post-tag">{tag}</span>
+            <span class="post-tag lang-zh">{tag}</span>
+          ))}
+          {(frontmatterEn ?? frontmatter).tags.map((tag: string) => (
+            <span class="post-tag lang-en">{tag}</span>
           ))}
         </div>
       </div>
     </div>
     <div class="article-body">
-      <slot />
+      <div class="lang-zh"><slot name="zh" /></div>
+      <div class="lang-en"><slot name="en" /></div>
     </div>
   </article>
 </Base>
@@ -96,7 +110,7 @@ const dateStr = new Date(frontmatter.date).toLocaleDateString('zh-CN', {
     font-size: 0.82rem;
   }
 
-  .post-tags { display: flex; gap: 6px; }
+  .post-tags { display: flex; gap: 6px; flex-wrap: wrap; }
 
   .post-tag {
     font-size: 0.72rem;

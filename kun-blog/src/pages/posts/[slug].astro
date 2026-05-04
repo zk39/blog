@@ -4,15 +4,24 @@ import Post from '../../layouts/Post.astro';
 
 export async function getStaticPaths() {
   const posts = await getCollection('posts');
-  return posts.map((post) => ({
-    params: { slug: post.id.replace(/\.md$/, '') },
-    props: { post },
-  }));
+  const postsEn = await getCollection('posts-en');
+  const enMap = new Map(postsEn.map((p) => [p.id, p]));
+
+  return posts.map((post) => {
+    const slug = post.id.replace(/\.md$/, '');
+    return {
+      params: { slug },
+      props: { post, postEn: enMap.get(post.id) ?? null },
+    };
+  });
 }
 
-const { post } = Astro.props;
+const { post, postEn } = Astro.props;
 const { Content } = await render(post);
+const enResult = postEn ? await render(postEn) : null;
+const EnContent = enResult?.Content ?? null;
 ---
-<Post frontmatter={post.data}>
-  <Content />
+<Post frontmatter={post.data} frontmatterEn={postEn?.data ?? null}>
+  <Content slot="zh" />
+  {EnContent && <EnContent slot="en" />}
 </Post>
