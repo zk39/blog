@@ -7,6 +7,9 @@ const posts = (await getCollection('posts'))
   .filter(p => !p.data.draft)
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
+const postsEn = await getCollection('posts-en');
+const enMap = new Map(postsEn.map(p => [p.id, p]));
+
 const allTags = [...new Set(posts.flatMap(p => p.data.tags))];
 const tagCounts = allTags.map(tag => ({
   name: tag,
@@ -46,21 +49,44 @@ function formatDate(date: Date) {
 
   <section class="posts-section">
     <div class="posts-list">
-      {posts.map((post) => (
-        <a class="post-item" href={`/posts/${post.id.replace(/\.md$/, '')}`} data-tags={post.data.tags.join(',')} data-search={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')}`.toLowerCase()}>
-          <span class="post-date">{formatDate(post.data.date)}</span>
-          <div class="post-content">
-            <div class="post-title">{post.data.title}</div>
-            <div class="post-desc">{post.data.description}</div>
-            <div class="post-tags">
-              {post.data.tags.map((tag: string) => (
-                <span class="post-tag">{tag}</span>
-              ))}
+      {posts.map((post) => {
+        const enPost = enMap.get(post.id);
+        const slug = post.id.replace(/\.md$/, '');
+        const zhSearch = `${post.data.title} ${post.data.description} ${post.data.tags.join(' ')}`.toLowerCase();
+        const enSearch = enPost
+          ? `${enPost.data.title} ${enPost.data.description} ${enPost.data.tags.join(' ')}`.toLowerCase()
+          : zhSearch;
+        return (
+          <a
+            class="post-item"
+            href={`/posts/${slug}`}
+            data-tags={post.data.tags.join(',')}
+            data-search-zh={zhSearch}
+            data-search-en={enSearch}
+          >
+            <span class="post-date">{formatDate(post.data.date)}</span>
+            <div class="post-content">
+              <div class="post-title">
+                <span class="lang-zh">{post.data.title}</span>
+                <span class="lang-en">{enPost ? enPost.data.title : post.data.title}</span>
+              </div>
+              <div class="post-desc">
+                <span class="lang-zh">{post.data.description}</span>
+                <span class="lang-en">{enPost ? enPost.data.description : post.data.description}</span>
+              </div>
+              <div class="post-tags">
+                {post.data.tags.map((tag: string) => (
+                  <span class="post-tag lang-zh">{tag}</span>
+                ))}
+                {(enPost ?? post).data.tags.map((tag: string) => (
+                  <span class="post-tag lang-en">{tag}</span>
+                ))}
+              </div>
             </div>
-          </div>
-          <span class="post-arrow">→</span>
-        </a>
-      ))}
+            <span class="post-arrow">→</span>
+          </a>
+        );
+      })}
     </div>
     <div id="no-results" style="display:none;text-align:center;padding:64px 24px;color:var(--text-muted);">
       <p class="lang-zh">没有找到匹配的文章</p>
@@ -214,16 +240,47 @@ function formatDate(date: Date) {
 </style>
 
 <script>
+  // ── Tag filter ────────────────────────────────────────
   document.querySelectorAll('.tag').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
       btn.classList.add('active');
       const tag = (btn as HTMLElement).dataset.tag;
-      document.querySelectorAll('.post-item').forEach(el => {
-        const postTags = (el as HTMLElement).dataset.tags || '';
-        const show = tag === 'all' || postTags.split(',').includes(tag!);
-        (el as HTMLElement).style.display = show ? '' : 'none';
-      });
+      filterPosts(tag, getCurrentSearch());
     });
   });
+
+  // ── Search (lang-aware) ───────────────────────────────
+  function getCurrentSearch(): string {
+    return (document.querySelector('.search-input') as HTMLInputElement)?.value?.toLowerCase() ?? '';
+  }
+
+  function getCurrentLang(): string {
+    return document.documentElement.getAttribute('data-lang') || 'zh';
+  }
+
+  function filterPosts(tag: string | undefined, query: string) {
+    const lang = getCurrentLang();
+    let visible = 0;
+    document.querySelectorAll('.post-item').forEach(el => {
+      const item = el as HTMLElement;
+      const postTags = item.dataset.tags || '';
+      const search = lang === 'en' ? (item.dataset.searchEn || '') : (item.dataset.searchZh || '');
+      const tagMatch = !tag || tag === 'all' || postTags.split(',').includes(tag);
+      const searchMatch = !query || search.includes(query);
+      const show = tagMatch && searchMatch;
+      item.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    const noResults = document.getElementById('no-results');
+    if (noResults) noResults.style.display = visible === 0 ? '' : 'none';
+  }
+
+  // Re-run filter when language switches so search stays accurate
+  const html = document.documentElement;
+  const observer = new MutationObserver(() => {
+    const activeTag = (document.querySelector('.tag.active') as HTMLElement)?.dataset.tag;
+    filterPosts(activeTag, getCurrentSearch());
+  });
+  observer.observe(html, { attributes: true, attributeFilter: ['data-lang'] });
 </script>
