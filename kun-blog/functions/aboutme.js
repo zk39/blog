@@ -138,7 +138,7 @@ export async function onRequest() {
         await sleep(120);
 
         await type(`${C.cyan}$ whoami${C.reset}`, 16);
-        await type(`${C.green}${C.bold}Zhang Kun${C.reset} — Backend / Infra Engineer`);
+        await type(`${C.green}${C.bold}Zhang Kun${C.reset} — Full stack Engineer`);
         w("\n");
 
         await type(`${C.cyan}$ cat skills.txt${C.reset}`, 16);
