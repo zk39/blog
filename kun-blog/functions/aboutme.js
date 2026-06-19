@@ -149,7 +149,7 @@ export async function onRequest() {
 
         await type(`${C.cyan}$ cat contact.txt${C.reset}`, 16);
         await type(`  web    https://zhangkun.dev`);
-        await type(`  email  hi@zhangkun.dev`);
+        await type(`  email  carlzh23@gmail.com`);
         await type(`  github https://github.com/zk39`);
         w("\n");
         await type(`${C.gray}# eof${C.reset}`, 8, 0);

@@ -7,10 +7,25 @@ import Base from '../layouts/Base.astro';
     <h1 class="lang-zh">关于我</h1>
     <h1 class="lang-en">About Me</h1>
 
+    <!-- 终端版自我介绍 -->
+    <div id="term-intro" aria-label="terminal self-introduction">
+      <div class="term">
+        <div class="term-bar">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+          <span class="term-title">visitor@zhangkun.dev — ~</span>
+        </div>
+        <div class="term-body" id="term-body"></div>
+      </div>
+      <p class="term-hint lang-zh">想看下落瀑布动画版？在终端里 <code>curl zhangkun.dev/aboutme</code></p>
+      <p class="term-hint lang-en">Want the falling-rain version? Run <code>curl zhangkun.dev/aboutme</code></p>
+    </div>
+
     <p class="lang-zh">Hi，我是张堃，一名软件工程师。</p>
     <p class="lang-en">Hi, I'm Kun Zhang, a software engineer.</p>
 
-    <p class="lang-zh">我对 Web 开发、系统设计和创意编程充满热情。这个博客是我记录技术探索和生活感悟的地方。</p>
+    <p class="lang-zh">我对 Web 开发、系统设计和创意编程充满热情。这个博客是我记录技术探索的地方。</p>
     <p class="lang-en">I'm passionate about web development, system design, and creative coding. This blog is where I document technical explorations and occasional life reflections.</p>
 
     <h2 class="lang-zh">联系方式</h2>
@@ -25,6 +40,209 @@ import Base from '../layouts/Base.astro';
 
   </article>
 </Base>
+
+<script>
+  type Line = { k: 'cmd' | 'out' | 'cmt' | 'run'; t: string };
+
+  const SEQ: Record<string, Line[]> = {
+    zh: [
+      { k: 'cmd', t: 'whoami' },
+      { k: 'out', t: '张堃 — 软件工程师 / Full-stack' },
+      { k: 'cmd', t: 'cat skills.txt' },
+      { k: 'out', t: 'TypeScript · Go · Rust · Python' },
+      { k: 'out', t: 'Docker · K8s · Cloudflare · Linux/ARM' },
+      { k: 'out', t: 'WireGuard · Nginx' },
+      { k: 'cmd', t: 'cat contact.txt' },
+      { k: 'out', t: 'github   @zk39' },
+      { k: 'out', t: 'twitter  @zk39' },
+      { k: 'out', t: 'wechat   zhangkun39' },
+      { k: 'cmt', t: '# eof' },
+    ],
+    en: [
+      { k: 'cmd', t: 'whoami' },
+      { k: 'out', t: 'Kun Zhang — Software Engineer / Full-stack' },
+      { k: 'cmd', t: 'cat skills.txt' },
+      { k: 'out', t: 'TypeScript · Go · Rust · Python' },
+      { k: 'out', t: 'Docker · K8s · Cloudflare · Linux/ARM' },
+      { k: 'out', t: 'WireGuard · Nginx' },
+      { k: 'cmd', t: 'cat contact.txt' },
+      { k: 'out', t: 'github   @zk39' },
+      { k: 'out', t: 'twitter  @zk39' },
+      { k: 'out', t: 'wechat   zhangkun39' },
+      { k: 'cmt', t: '# I turn small working hacks into things people just install and use' },
+    ],
+  };
+
+  const PROMPT = 'visitor@zhangkun.dev:~$';
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  let gen = 0;
+
+  function lineEl(cls: string) {
+    const d = document.createElement('div');
+    d.className = 'tl ' + cls;
+    return d;
+  }
+
+  async function run() {
+    const body = document.getElementById('term-body');
+    if (!body) return;
+    const myGen = ++gen;
+    const lang = document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'zh';
+    const seq = SEQ[lang];
+    body.innerHTML = '';
+
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduce) {
+      for (const ln of seq) {
+        const el = lineEl(ln.k);
+        if (ln.k === 'cmd' || ln.k === 'run') {
+          el.innerHTML = `<span class="pmt">${PROMPT}</span> <span class="ct"></span>`;
+          (el.querySelector('.ct') as HTMLElement).textContent = ln.t;
+        } else {
+          el.textContent = ln.t;
+        }
+        body.appendChild(el);
+      }
+      const cur = document.createElement('span');
+      cur.className = 'cursor';
+      body.appendChild(cur);
+      return;
+    }
+
+    const cursor = document.createElement('span');
+    cursor.className = 'cursor';
+
+    for (const ln of seq) {
+      if (myGen !== gen) return;
+      const el = lineEl(ln.k);
+      body.appendChild(el);
+
+      if (ln.k === 'cmd' || ln.k === 'run') {
+        el.innerHTML = `<span class="pmt">${PROMPT}</span> <span class="ct"></span>`;
+        const ct = el.querySelector('.ct') as HTMLElement;
+        ct.appendChild(cursor);
+        for (const ch of ln.t) {
+          if (myGen !== gen) return;
+          cursor.insertAdjacentText('beforebegin', ch);
+          await sleep(42 + Math.random() * 38);
+        }
+        await sleep(280);
+      } else {
+        const span = document.createElement('span');
+        el.appendChild(span);
+        el.appendChild(cursor);
+        for (const ch of ln.t) {
+          if (myGen !== gen) return;
+          span.appendChild(document.createTextNode(ch));
+          await sleep(10);
+        }
+        await sleep(140);
+      }
+    }
+    const tail = lineEl('cmd');
+    tail.innerHTML = `<span class="pmt">${PROMPT}</span> `;
+    tail.appendChild(cursor);
+    body.appendChild(tail);
+  }
+
+  run();
+
+  const mo = new MutationObserver((muts) => {
+    for (const m of muts) {
+      if (m.attributeName === 'data-lang') { run(); break; }
+    }
+  });
+  mo.observe(document.documentElement, { attributes: true });
+</script>
+
+<style is:global>
+  #term-intro {
+    margin: 8px 0 36px;
+    --t-bg: #14151b;
+    --t-bar: #1d1f27;
+    --t-fg: #e6e8ee;
+    --t-out: #b7bcc9;
+    --t-green: #3ddc84;
+    --t-blue: #5fa8ff;
+    --t-mute: #767c8c;
+  }
+  #term-intro .term {
+    background: var(--t-bg);
+    border: 1px solid rgba(255, 255, 255, 0.07);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    font-family: var(--font-mono);
+  }
+  #term-intro .term-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--t-bar);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  #term-intro .dot { width: 12px; height: 12px; border-radius: 50%; flex: 0 0 auto; }
+  #term-intro .dot.red { background: #ff5f56; }
+  #term-intro .dot.yellow { background: #ffbd2e; }
+  #term-intro .dot.green { background: #27c93f; }
+  #term-intro .term-title {
+    flex: 1;
+    text-align: center;
+    color: #8b90a0;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    margin-right: 44px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  #term-intro .term-body {
+    padding: 18px 18px 20px;
+    font-size: 0.84rem;
+    line-height: 1.8;
+    color: var(--t-fg);
+    min-height: 322px;
+    white-space: pre-wrap;
+    overflow-x: auto;
+  }
+  #term-intro .tl { min-height: 1.5em; }
+  #term-intro .pmt { color: var(--t-green); }
+  #term-intro .ct { color: var(--t-fg); }
+  #term-intro .out { color: var(--t-out); padding-left: 1.2em; }
+  #term-intro .cmt { color: var(--t-mute); font-style: italic; }
+  #term-intro .run .ct { color: var(--t-blue); }
+  #term-intro .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1.05em;
+    background: var(--t-green);
+    vertical-align: -2px;
+    margin-left: 1px;
+    animation: term-blink 1s steps(1) infinite;
+  }
+  @keyframes term-blink { 50% { opacity: 0; } }
+
+  #term-intro .term-hint {
+    margin: 10px 2px 0;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+  }
+  #term-intro .term-hint code {
+    font-family: var(--font-mono);
+    background: var(--bg-secondary);
+    padding: 1px 7px;
+    border-radius: 5px;
+    color: var(--text-primary);
+    user-select: all;
+  }
+
+  @media (max-width: 600px) {
+    #term-intro .term-body { font-size: 0.76rem; padding: 14px; min-height: 300px; }
+    #term-intro .term-title { font-size: 0.72rem; }
+  }
+</style>
 
 <style>
   .about-page {
@@ -60,3 +278,4 @@ import Base from '../layouts/Base.astro';
     user-select: all;
   }
 </style>
+                        

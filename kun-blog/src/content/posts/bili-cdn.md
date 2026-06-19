@@ -1,5 +1,5 @@
 ---
-title: "B 站海外加速：劫持 playurl 换 CDN 节点"
+title: "B 站海外加速：劫持 playurl 换 CDN 节点(一)"
 description: "不改 IP、不翻墙，在客户端把 B 站分配给你的慢节点换掉。"
 date: 2026-06-15
 tags: ["插件", "前端", "JS"]
