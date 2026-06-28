@@ -11,8 +11,8 @@ category: "it"
 
 **Analyzing Cloud Storage Disk Type and Capabilities**
 
-*Kun Zhang*
-Ottawa University · IT 8003: Cloud Computing
+*Kun Zhang*<br>
+Ottawa University · IT 8003: Cloud Computing<br>
 Dr. Cyndi (CK) Lambach · April 20, 2025
 
 ---

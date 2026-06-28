@@ -11,8 +11,8 @@ category: "it"
 
 **Enterprise Network Diagram Analysis**
 
-*Kun Zhang*
-Ottawa University · IT-7003: Network Essentials
+*Kun Zhang*<br>
+Ottawa University · IT-7003: Network Essentials<br>
 Dr. Cyndi (CK) Lambach · November 30, 2025
 
 ---

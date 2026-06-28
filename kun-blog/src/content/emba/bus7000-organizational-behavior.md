@@ -11,7 +11,7 @@ category: "core"
 
 **Session D Journal — Power & Conflict in Organizations**
 
-*Kun Zhang*
+*Kun Zhang*<br>
 Ottawa University · BUS 7000: Organizational Behavior and Theory
 
 ---

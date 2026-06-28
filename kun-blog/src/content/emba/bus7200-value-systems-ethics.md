@@ -11,8 +11,8 @@ category: "core"
 
 **Case Study: Volkswagen Emissions Scandal**
 
-*Bruno Moorthamers, Kun Zhang, Mariana Feitosa De Melo*
-Ottawa University · BUS-7200: Value Systems and Professional Ethics
+*Bruno Moorthamers, Kun Zhang, Mariana Feitosa De Melo*<br>
+Ottawa University · BUS-7200: Value Systems and Professional Ethics<br>
 Dr. Donald Dunn · October 13, 2024
 
 ---

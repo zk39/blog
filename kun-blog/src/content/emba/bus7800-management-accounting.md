@@ -11,8 +11,8 @@ category: "core"
 
 **Balanced Scorecard Analysis for Ragland Department Store**
 
-*Assumpta Osiri, Dhruv Lakhpatia, Kun Zhang*
-Ottawa University · BUS 7800: Managerial Accounting
+*Assumpta Osiri, Dhruv Lakhpatia, Kun Zhang*<br>
+Ottawa University · BUS 7800: Managerial Accounting<br>
 Dr. Eric Weedon · October 18, 2025
 
 ---

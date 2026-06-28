@@ -11,8 +11,8 @@ category: "core"
 
 **MIS Management Analysis Project Proposal (Part 2)**
 
-*Group 1: Rahul, Dinara Baimukhanova, Chun How Beh, Xingyu Liu, Kun Zhang*
-Ottawa University · BUS-7700: Management Information Systems
+*Group 1: Rahul, Dinara Baimukhanova, Chun How Beh, Xingyu Liu, Kun Zhang*<br>
+Ottawa University · BUS-7700: Management Information Systems<br>
 Dr. Conrad Dela Cruz · March 27, 2026
 
 ---

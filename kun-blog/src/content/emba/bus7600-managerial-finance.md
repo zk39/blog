@@ -13,8 +13,8 @@ category: "core"
 
 **Final Reflective Narrative Summary**
 
-*Kun Zhang*
-Shurley Instructional Materials, Inc. · Software Developer / Project Manager Intern
+*Kun Zhang*<br>
+Shurley Instructional Materials, Inc. · Software Developer / Project Manager Intern<br>
 Ottawa University · BUS 7600: Managerial Finance
 
 ---

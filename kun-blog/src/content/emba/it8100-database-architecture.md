@@ -11,8 +11,8 @@ category: "it"
 
 **Pharmaceutical Management System**
 
-*Kun Zhang, Alka Bhandari, Paavani Dua and Harsha Ravi Mudaliar*
-Ottawa University · IT-8100: Database Architecture and Design
+*Kun Zhang, Alka Bhandari, Paavani Dua and Harsha Ravi Mudaliar*<br>
+Ottawa University · IT-8100: Database Architecture and Design<br>
 Professor Joel Short · November 24, 2024
 
 ---

@@ -11,8 +11,8 @@ category: "core"
 
 **Redesigning and Differentiating the Online Exam System Interface for Teachers and Students as a Long-Term Profit Strategy**
 
-*Kun Zhang*
-Ottawa University · BUS 7500: Managerial Economics
+*Kun Zhang*<br>
+Ottawa University · BUS 7500: Managerial Economics<br>
 Dr. Douglas Copeland · June 28, 2025
 
 ---

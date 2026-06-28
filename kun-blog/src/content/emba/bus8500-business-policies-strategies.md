@@ -11,8 +11,8 @@ category: "core"
 
 **External Situation Analysis of McDonald's Corporation**
 
-*Anthony Oghenekaro Ejeta, Chun How Beh, Kun Zhang, Nikita Ashok Menon*
-Ottawa University · BUS 8500: Business Policies and Strategy
+*Anthony Oghenekaro Ejeta, Chun How Beh, Kun Zhang, Nikita Ashok Menon*<br>
+Ottawa University · BUS 8500: Business Policies and Strategy<br>
 Dr. Roger Fuller · June 7, 2026
 
 ---
