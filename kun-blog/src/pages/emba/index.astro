@@ -1,0 +1,316 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const allEntries = await getCollection('emba');
+
+const coreOrder = ['BUS 7000','BUS 7200','BUS 7500','BUS 7600','BUS 7800','BUS 8500','BUS 7700'];
+const itOrder   = ['IT 7003','IT 8000','IT 8003','IT 8100'];
+
+const core = allEntries
+  .filter(e => e.data.category === 'core' && coreOrder.includes(e.data.course_code))
+  .sort((a, b) => coreOrder.indexOf(a.data.course_code) - coreOrder.indexOf(b.data.course_code));
+
+const it = allEntries
+  .filter(e => e.data.category === 'it' && itOrder.includes(e.data.course_code))
+  .sort((a, b) => itOrder.indexOf(a.data.course_code) - itOrder.indexOf(b.data.course_code));
+
+const total = allEntries.length;
+const complete = allEntries.filter(e => e.data.status === 'complete').length;
+---
+
+<Base title="EMBA Portfolio" description="MBA graduation portfolio — 12 representative assignments across core and IT concentration courses">
+  <div class="portfolio-wrap">
+
+    <header class="portfolio-header">
+      <div class="header-top">
+        <a href="/" class="back-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+          Back
+        </a>
+      </div>
+      <h1>EMBA Portfolio</h1>
+      <p class="subtitle">MBA Graduation Capstone · Representative Assignments</p>
+      <div class="progress-bar-wrap">
+        <div class="progress-meta">
+          <span>{complete} / {total} completed</span>
+          <span>{Math.round((complete / total) * 100)}%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" style={`width: ${(complete / total) * 100}%`}></div>
+        </div>
+      </div>
+    </header>
+
+    <section class="course-section">
+      <h2 class="section-label">
+        <span class="label-dot core-dot"></span>
+        BUS Core Courses
+      </h2>
+      <div class="course-grid">
+        {core.map(entry => {
+          const slug = entry.id.replace(/\.md$/, '');
+          const done = entry.data.status === 'complete';
+          return (
+            <a href={`/emba/${slug}`} class={`course-card ${done ? 'done' : 'draft'}`}>
+              <div class="card-top">
+                <span class="course-code">{entry.data.course_code}</span>
+                <span class={`status-badge ${done ? 'badge-done' : 'badge-draft'}`}>
+                  {done ? '✓ Complete' : 'Draft'}
+                </span>
+              </div>
+              <h3 class="course-name">{entry.data.course_name}</h3>
+              <p class="essay-title">"{entry.data.title}"</p>
+              <div class="outcome-wrap">
+                <span class="outcome-label">Learning Outcome</span>
+                <p class="outcome-text">{entry.data.learning_outcome}</p>
+              </div>
+              <span class="read-link">Read Essay →</span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+    <section class="course-section">
+      <h2 class="section-label">
+        <span class="label-dot it-dot"></span>
+        IT Concentration Courses
+      </h2>
+      <div class="course-grid">
+        {it.map(entry => {
+          const slug = entry.id.replace(/\.md$/, '');
+          const done = entry.data.status === 'complete';
+          return (
+            <a href={`/emba/${slug}`} class={`course-card ${done ? 'done' : 'draft'}`}>
+              <div class="card-top">
+                <span class="course-code">{entry.data.course_code}</span>
+                <span class={`status-badge ${done ? 'badge-done' : 'badge-draft'}`}>
+                  {done ? '✓ Complete' : 'Draft'}
+                </span>
+              </div>
+              <h3 class="course-name">{entry.data.course_name}</h3>
+              <p class="essay-title">"{entry.data.title}"</p>
+              <div class="outcome-wrap">
+                <span class="outcome-label">Learning Outcome</span>
+                <p class="outcome-text">{entry.data.learning_outcome}</p>
+              </div>
+              <span class="read-link">Read Essay →</span>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+
+  </div>
+</Base>
+
+<style>
+  .portfolio-wrap {
+    padding: 48px max(24px, calc((100vw - var(--max-width)) / 2)) 80px;
+    animation: fadeIn 0.4s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 6px 12px 6px 8px;
+    border-radius: 8px;
+    transition: all var(--transition);
+    margin-bottom: 28px;
+  }
+  .back-link:hover { color: var(--text-primary); background: var(--bg-secondary); }
+
+  .portfolio-header { margin-bottom: 52px; }
+
+  .portfolio-header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 5vw, 2.8rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 8px;
+  }
+
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 28px;
+  }
+
+  .progress-bar-wrap { max-width: 360px; }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    margin-bottom: 8px;
+  }
+
+  .progress-track {
+    height: 6px;
+    background: var(--bg-secondary);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 999px;
+    transition: width 0.6s ease;
+  }
+
+  .course-section { margin-bottom: 52px; }
+
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+  }
+
+  .label-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .core-dot { background: var(--accent); }
+  .it-dot   { background: #10b981; }
+
+  .course-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 16px;
+  }
+
+  .course-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 22px 24px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    text-decoration: none;
+    color: inherit;
+    transition: all var(--transition);
+  }
+
+  .course-card:hover {
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .course-card.done { border-left: 3px solid var(--accent); }
+  .course-card.draft { border-left: 3px solid var(--border); }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .course-code {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    padding: 3px 10px;
+    border-radius: 6px;
+  }
+
+  .status-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+  }
+
+  .badge-done {
+    background: color-mix(in srgb, #10b981 12%, transparent);
+    color: #10b981;
+  }
+
+  .badge-draft {
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+  }
+
+  .course-name {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin: 0;
+  }
+
+  .essay-title {
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    font-style: italic;
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .outcome-wrap {
+    border-top: 1px solid var(--border);
+    padding-top: 10px;
+    margin-top: 4px;
+  }
+
+  .outcome-label {
+    display: block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+
+  .outcome-text {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.55;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .read-link {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--accent);
+    margin-top: auto;
+    padding-top: 4px;
+    transition: opacity var(--transition);
+  }
+
+  .course-card:hover .read-link { opacity: 0.8; }
+
+  @media (max-width: 640px) {
+    .course-grid { grid-template-columns: 1fr; }
+  }
+</style>
