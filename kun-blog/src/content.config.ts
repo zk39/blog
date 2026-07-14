@@ -19,4 +19,20 @@ const postsEn = defineCollection({
 	schema: postSchema,
 });
 
-export const collections = { posts, 'posts-en': postsEn };
+const embaSchema = z.object({
+	course_code: z.string(),
+	course_name: z.string(),
+	title: z.string(),
+	description: z.string(),
+	date: z.coerce.date(),
+	learning_outcome: z.string(),
+	status: z.enum(['draft', 'complete']).default('draft'),
+	category: z.enum(['core', 'it']),
+});
+
+const emba = defineCollection({
+	loader: glob({ pattern: '**/*.md', base: './src/content/emba' }),
+	schema: embaSchema,
+});
+
+export const collections = { posts, 'posts-en': postsEn, emba };
