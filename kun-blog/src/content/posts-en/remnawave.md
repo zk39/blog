@@ -5,13 +5,13 @@ date: 2026-06-17
 tags: ["ops", "tools", "self-hosted"]
 ---
 
-The reason I started using a panel is pretty simple. I personally own 6 budget VPS servers, each running Xray set up manually, all shared with a few friends using the same UUID. It was convenient when I first set it up, but there was never any way to see who used how much traffic, or to know if someone had shared the config link with their friends. No way to limit one person's access without affecting everyone else either. I put up with it for a while, then decided I had suffered enough and set up a proper management panel.
+The reason was simple enough. I personally own 6 budget VPS servers, each one running Xray manually as a proxy for me and a few friends, all sharing the same UUID. It worked fine at first, but it was not a great setup. I had no way to monitor traffic, and no way to know whether someone outside my group was using my proxy. So I decided to set up a panel to manage everything properly.
 
 I went with [Remnawave](https://remnawave.com). The main reason is the clean Panel plus Node separation architecture (and the monitoring UI actually looks quite nice), plus it gives every user their own UUID and subscription link.
 
 ## How It Works
 
-Getting the architecture straight is the first step. Without that, everything feels confusing.
+Getting the architecture sorted out first saves a lot of headache later.
 
 The **Panel** runs as the control center on one dedicated machine, deployed with docker compose. It does not run Xray itself. It just manages config and users. Each VPS runs a **Node** container (remnanode) that pulls config from the Panel, runs Xray, and reports traffic back. The two communicate over an encrypted port (default 20000).
 

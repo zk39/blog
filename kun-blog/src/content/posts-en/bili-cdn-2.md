@@ -5,7 +5,7 @@ date: 2026-06-16
 tags: ["extension", "frontend", "JS"]
 ---
 
-The [first post](/posts/bili-cdn) ended with a problem: the script injection sometimes lost to Bilibili's assignment speed, and the only fix was to manually refresh and hope for better timing. This post explains why that happened and how it was actually solved.
+The [first post](/posts/bili-cdn) hit a problem: the script injection sometimes lost to Bilibili's assignment speed, and the only fix was to manually refresh and hope for better timing. This post covers the fix.
 
 ## How Fast Bilibili Actually Is
 
@@ -21,7 +21,7 @@ To intercept it, you need to set up an `Object.defineProperty` setter on `window
 
 ## Why the Old Approach Always Lost
 
-v1.0 used external file injection: a content script runs first, creates a `<script>` element pointing to `inject.js`, and the browser has to download that file, parse it, and execute it.
+I carried the same approach over from the NetEase Music plugin. v1.0 used external file injection: a content script runs first, creates a `<script>` element pointing to `inject.js`, and the browser has to download that file, parse it, and execute it.
 
 That whole chain is asynchronous. By the time `inject.js` actually runs, Bilibili's inline script has already finished. The setter gets set up too late, you lose the race, the video uses the original slow CDN node, and you have to refresh. When refreshing helped, it was just luck on the timing.
 
@@ -37,12 +37,24 @@ But it is still a race. There is no 100% guarantee. In rare cases the timing sti
 
 The root problem with the race condition is that you cannot fully control which code runs first. The only real fix is to switch to a mechanism that does not depend on timing at all.
 
-`declarativeNetRequest` in MV3 works at the network layer. It redirects requests going to slow nodes straight to the fast node, with no involvement from JavaScript execution order. It does not care whether `__playinfo__` was intercepted, and it does not care whether segments are in a Worker. Any request that goes out gets rewritten. Always. No exceptions.
+Google's Manifest V3 `declarativeNetRequest` works at the network layer. It redirects requests going to slow nodes straight to the fast node, with no involvement from JavaScript execution order. It does not care whether `__playinfo__` was intercepted, and it does not care whether segments are in a Worker. Any request that goes out gets rewritten. Always. No exceptions.
 
-So even if the setter step fails completely, the actual segment requests still hit the fast node at the network layer. Both layers together mean losing the race no longer matters.
+So even if the setter step fails completely, the actual segment requests still hit the fast node at the network layer.
 
 This was actually the direction the [NetEase Music project](/posts/neteasemusicextension) deliberately avoided. That one only used DNR for header modification and handled CDN switching through script injection, because redirects can trigger CORS preflight issues. For Bilibili's media segment requests, that is not a problem, so this path works.
 
 ---
 
-The three stages in order: external injection (always slow) then MAIN world synchronous injection (usually wins, but still a race) then adding DNR at the network layer (no timing dependency, problem actually solved).
+The logic of this extension comes down to three steps: external injection (always slow) then MAIN world synchronous injection (usually wins, but still a race) then adding DNR at the network layer (no timing dependency, problem solved).
+
+## What It Cannot Fix
+
+Because of how CDN caching works, videos from less popular creators can still buffer. If the video has not been cached on the node you are forcing, that node gets a cache miss and has to fetch the content from Bilibili's origin before it can serve it to you. In that case turning the extension off is actually faster.
+
+Here is the project repo:
+
+[zk39/bilibili-cdn-switcher](https://github.com/zk39/bilibili-cdn-switcher)
+
+And the Chrome Extension:
+
+[Bilibili CDN Speedup on Chrome Web Store](https://chromewebstore.google.com/detail/bilibilii-cdn%E5%8A%A0%E9%80%9F/kpjldkeakpnfeplfoofeklickdmakimn)
