@@ -1,19 +1,19 @@
 ---
 title: "B 站海外加速：劫持 playurl 换 CDN 节点(一)"
-description: "不改 IP、不翻墙，在客户端把 B 站分配给你的慢节点换掉。"
+description: "不改 IP、不翻墙，在网页端把 B 站分配给你的慢节点换掉。"
 date: 2026-06-15
 tags: ["插件", "前端", "JS"]
 ---
 
-在海外看 B 站，视频加载慢是老问题。最近又限制了一次速度，常见解法要么是代理，要么是 VPN，都要改路由。但其实有个更轻的办法——B 站的视频地址签名不绑定主机名，可以在客户端直接把慢节点换掉。
+在海外看 B 站，视频加载慢是老问题。最近B站很明显又限制了一次速度，忍无可忍无需再忍, 就寻思着解决一下, 常见解法是代理翻回国内, 要改路由。但其实有个更好的办法, B 站的视频地址签名不绑定主机名，可以在客户端直接把慢的节点换掉。
 
 ## 灵感来源
 
 其实两个之前的项目给了我线索。
 
-一个是之前做的[网易云海外解锁插件](/posts/neteasemusicextension)——通过 hook XHR 把响应里的 CDN 域名从限速的海外节点改成国内节点，绕过大陆版权限制。手法完全一样：不动路由，只改域名。当时证明了这条路可行。
+一个是之前做的[网易云海外解锁插件](/posts/neteasemusicextension),通过 hook XHR 把响应里的 CDN 域名从限速的海外节点改成国内节点，绕过大陆版权限制。手法完全一样：不动路由，只改域名。当时证明了这条路可行。
 
-另一个是[B 站音频下载工具](/posts/bad)，做那个的时候发现视频页的 HTML 源码里直接塞着一个 `window.__playinfo__` 对象，视频的所有分片地址、码率、CDN 地址全都在里面，明文的。当时是用来拿音频流地址，但也意识到——既然源地址直接写在 info 里，改掉它不就行了？
+另一个是[B 站音频下载工具](/posts/bad)，做那个的时候发现视频页的 HTML 源码里直接塞着一个 `window.__playinfo__` 对象，视频的所有分片地址、码率、CDN 地址全都在里面，明文的。当时是用来拿音频流地址，但我之后也意识到, 既然源地址直接写在 info 里，改掉它不就行了？
 
 两件事合在一起，这个项目就有了。
 
@@ -38,6 +38,7 @@ https://upos-sz-mirrorcosov.bilivideo.com/upgcxcode/.../xxx.m4s?...&os=cosovbv&u
 **`window.__playinfo__`**：打开视频页时，首屏播放数据直接内嵌在 HTML 里。脚本用 `Object.defineProperty` 劫持这个属性，赋值时改写域名，在页面脚本读取之前就替换完。
 
 **playurl 接口的动态请求**：切清晰度、换 P、下一个视频时，播放器会发请求：
+
 - 普通视频（UGC）：`api.bilibili.com/x/player/wbi/playurl`
 - 番剧/影视（PGC）：`api.bilibili.com/pgc/player/web/playurl`
 
@@ -47,20 +48,20 @@ https://upos-sz-mirrorcosov.bilivideo.com/upgcxcode/.../xxx.m4s?...&os=cosovbv&u
 
 ```js
 jsonStr.replace(
-  /\/\/upos-[a-z0-9-]+\.(?:bilivideo\.com|akamaized\.net)\//g,
-  `//${selectedHost}/`
+	/\/\/upos-[a-z0-9-]+\.(?:bilivideo\.com|akamaized\.net)\//g,
+	`//${selectedHost}/`,
 )
 ```
 
 ## CDN 列表从哪来
 
-没有官方清单。B 站节点统一是 `upos-{地区}-mirror{服务商}.bilivideo.com` 格式，服务商关键字（`cos`/`ali`/`hw`/`bos` 等）从社区项目里拿的，参考了 [ipcjs/bilibili-helper](https://github.com/ipcjs/bilibili-helper/issues/737)、[Bilibili Video CDN Switcher](https://greasyfork.org/en/scripts/500213-bilibili-video-cdn-switcher)、[Make-Bilibili-Great-Than-Ever-Before](https://github.com/SukkaW/Make-Bilibili-Great-Than-Ever-Before)，拼出候选列表。
+其实这种东西官方肯定没有清单的。通过GitHub社区项目的参考, 我发现 B 站节点统一是 `upos-{地区}-mirror{服务商}.bilivideo.com` 格式，服务商关键字（`cos`/`ali`/`hw`/`bos` 等）也是从社区项目里拿的，参考了 [ipcjs/bilibili-helper](https://github.com/ipcjs/bilibili-helper/issues/737)、[Bilibili Video CDN Switcher](https://greasyfork.org/en/scripts/500213-bilibili-video-cdn-switcher)、[Make-Bilibili-Great-Than-Ever-Before](https://github.com/SukkaW/Make-Bilibili-Great-Than-Ever-Before)，拼出候选列表。
 
 候选里有些是猜的，实测结果：`hwb`/`alib`/`08c` 快（5+ MB/s），`ks3`/`kodo` 是死域名，`akam` 必 403。不同网络时间最快节点会变，所以内置测速面板，不写死一个。
 
 ## 扩展结构
 
-用 Chrome 扩展实现 
+用 Chrome 扩展实现
 
 **`bili-cdn.js`**（`world: MAIN`，`document_start`）：核心脚本。必须在页面 JS 环境里跑，才能劫持 `window.__playinfo__`、hook 页面的 `fetch`/XHR，以及测速时同源访问 bilivideo（CORS 才能过）。
 
@@ -74,4 +75,4 @@ jsonStr.replace(
 
 从当前 `__playinfo__` 取最高码率的真实分片地址当样本，主机名依次换成每个候选节点，`fetch` 流式下载，下够 8 MB 或超 6 秒就停，算出 MB/s。结果排序，绿色最快，红色失败或慢，每行可直接「选用」。测速时自动暂停视频，避免播放拉流抢带宽影响结果。
 
-# *思路正确, 但问题至此还没有完全解决 因为脚本注入执行速度可能会比B站解析速度慢, 请见下一篇*
+# _思路正确, 但问题至此还没有完全解决 因为脚本注入执行速度可能会比B站解析速度慢, 请见下一篇_
