@@ -143,7 +143,7 @@ export async function onRequest() {
 
         await type(`${C.cyan}$ cat skills.txt${C.reset}`, 16);
         await type(`  ${C.yellow}▸${C.reset} Go · Rust · TypeScript · Python`);
-        await type(`  ${C.yellow}▸${C.reset} Docker · K8s · Cloudflare · Linux/ARM`);
+        await type(`  ${C.yellow}▸${C.reset} Docker · Vue3 · Angular	 · Cloudflare · Linux/ARM`);
         await type(`  ${C.yellow}▸${C.reset} WireGuard · Nginx`);
         w("\n");
 
