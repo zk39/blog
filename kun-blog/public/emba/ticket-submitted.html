@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ticket Submitted — IT Helpdesk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EEF1F4;
+    --surface: #FFFFFF;
+    --ink: #1B2430;
+    --muted: #5B6472;
+    --line: #DCE2E7;
+    --accent: #0F7173;
+    --accent-tint: #DCEEEE;
+    --accent-ink: #0A4F50;
+    --low: #3B6ED9;
+    --low-tint: #E3EAFB;
+    --med: #C2660B;
+    --med-tint: #FBEBD8;
+    --high: #C13333;
+    --high-tint: #FBE2E2;
+    --radius: 10px;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 28px 24px 80px;
+  }
+  .crumb { margin-bottom: 20px; }
+  .crumb a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .crumb a:hover { color: var(--accent-ink); }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    background: var(--accent-tint);
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(26px, 4vw, 34px);
+    font-weight: 700;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .subhead {
+    color: var(--muted);
+    font-size: 15px;
+    margin: 0 0 32px;
+    max-width: 480px;
+    line-height: 1.5;
+  }
+  .card {
+    background: #14202B;
+    color: #E7EDF2;
+    border-radius: var(--radius);
+    padding: 26px 26px 24px;
+    margin-bottom: 24px;
+  }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .card-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #7C93A3;
+  }
+  .status-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    color: #9FE6C6;
+    border: 1px solid rgba(159,230,198,0.3);
+  }
+  .ticket-id {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    margin-bottom: 22px;
+    color: #ffffff;
+  }
+  .card-field {
+    padding: 12px 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .card-field:first-of-type { border-top: none; padding-top: 0; }
+  .card-field-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #7C93A3;
+    margin-bottom: 5px;
+  }
+  .card-field-value {
+    font-size: 14px;
+    color: #E7EDF2;
+    line-height: 1.5;
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .tag.low { background: rgba(59,110,217,0.18); color: #8FB0F5; }
+  .tag.medium { background: rgba(194,102,11,0.2); color: #F0AE68; }
+  .tag.high { background: rgba(193,51,51,0.2); color: #F09B9B; }
+  .card-footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(255,255,255,0.15);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #566472;
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+  }
+  .btn-primary {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    padding: 13px 22px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  .btn-primary:hover { background: var(--accent-ink); }
+  .btn-primary:active { transform: translateY(1px); }
+  .btn-secondary {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 12px 20px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: border-color 0.15s ease;
+  }
+  .btn-secondary:hover { border-color: var(--muted); }
+  .empty-state {
+    background: var(--surface);
+    border: 1px dashed var(--line);
+    border-radius: var(--radius);
+    padding: 32px;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+  .empty-state strong { color: var(--ink); }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="crumb"><a href="/emba/it7000-systems-analytics-enterprise-management">&larr; Back to IT 7000 case study</a></div>
+  <span class="eyebrow">IT Helpdesk · Confirmation</span>
+  <h1 id="pageTitle">Ticket received</h1>
+  <p class="subhead" id="pageSubhead">Your request has been logged in the technician queue. Keep a copy for your records below.</p>
+
+  <div id="content"></div>
+
+  <div class="actions">
+    <a class="btn-primary" href="#" id="downloadBtn">Download backup (.txt) ↓</a>
+    <a class="btn-secondary" href="ticket.html">Submit another ticket</a>
+    <a class="btn-secondary" href="/emba/it7000-systems-analytics-enterprise-management">Back to case study</a>
+  </div>
+</div>
+<script>
+  function getTicket() {
+    try {
+      const stored = localStorage.getItem('lastTicket');
+      if (stored) return JSON.parse(stored);
+    } catch (err) {}
+    const params = new URLSearchParams(window.location.search);
+    const fromUrl = params.get('t');
+    if (fromUrl) {
+      try { return JSON.parse(fromUrl); } catch (err) {}
+    }
+    return null;
+  }
+
+  function fmtDate(iso) {
+    try {
+      return new Date(iso).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+    } catch (err) {
+      return iso || 'unknown';
+    }
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function buildBackupText(t) {
+    return [
+      'IT HELPDESK — TICKET BACKUP',
+      '============================',
+      'Ticket ID:     ' + t.id,
+      'Submitted:     ' + fmtDate(t.submittedAt),
+      '',
+      'Requester:     ' + t.name,
+      'Email:         ' + t.email,
+      'Category:      ' + t.category,
+      'Priority:      ' + t.priority,
+      '',
+      'Subject:       ' + t.subject,
+      '',
+      'Description:',
+      t.description,
+      '',
+      '----------------------------',
+      'Generated by the IT 7000 ticketing prototype. This is a local, unofficial copy of your submission.',
+    ].join('\n');
+  }
+
+  const ticket = getTicket();
+  const content = document.getElementById('content');
+
+  if (!ticket) {
+    document.getElementById('pageTitle').textContent = 'No ticket found';
+    document.getElementById('pageSubhead').textContent = "We couldn't find a recent submission in this browser.";
+    content.innerHTML = '<div class="empty-state">No ticket data was found for this session — it may have expired, or this page was opened directly. <strong>Submit a new ticket</strong> to see the confirmation flow.</div>';
+    document.getElementById('downloadBtn').style.display = 'none';
+  } else {
+    const cls = (ticket.priority || '').toLowerCase();
+    content.innerHTML = `
+      <div class="card">
+        <div class="card-top">
+          <span class="card-label">Ticket Confirmation</span>
+          <span class="status-badge">Submitted</span>
+        </div>
+        <div class="ticket-id">${escapeHtml(ticket.id)}</div>
+        <div class="card-field">
+          <div class="card-field-label">Submitted by</div>
+          <div class="card-field-value">${escapeHtml(ticket.name)} &middot; ${escapeHtml(ticket.email)}</div>
+        </div>
+        <div class="card-field">
+          <div class="card-field-label">Category</div>
+          <div class="card-field-value">${escapeHtml(ticket.category)}</div>
+        </div>
+        <div class="card-field">
+          <div class="card-field-label">Priority</div>
+          <div class="card-field-value"><span class="tag ${cls}">${escapeHtml(ticket.priority)}</span></div>
+        </div>
+        <div class="card-field">
+          <div class="card-field-label">Subject</div>
+          <div class="card-field-value">${escapeHtml(ticket.subject)}</div>
+        </div>
+        <div class="card-field">
+          <div class="card-field-label">Description</div>
+          <div class="card-field-value">${escapeHtml(ticket.description)}</div>
+        </div>
+        <div class="card-footer">submitted ${escapeHtml(fmtDate(ticket.submittedAt))}</div>
+      </div>
+    `;
+
+    document.getElementById('downloadBtn').addEventListener('click', (e) => {
+      e.preventDefault();
+      const text = buildBackupText(ticket);
+      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = ticket.id + '-backup.txt';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  }
+</script>
+</body>
+</html>

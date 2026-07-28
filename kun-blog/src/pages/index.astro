@@ -240,21 +240,6 @@ function formatDate(date: Date) {
 </style>
 
 <script>
-  // ── Tag filter ────────────────────────────────────────
-  document.querySelectorAll('.tag').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
-      btn.classList.add('active');
-      const tag = (btn as HTMLElement).dataset.tag;
-      filterPosts(tag, getCurrentSearch());
-    });
-  });
-
-  // ── Search (lang-aware) ───────────────────────────────
-  function getCurrentSearch(): string {
-    return (document.querySelector('.search-input') as HTMLInputElement)?.value?.toLowerCase() ?? '';
-  }
-
   function getCurrentLang(): string {
     return document.documentElement.getAttribute('data-lang') || 'zh';
   }
@@ -276,11 +261,28 @@ function formatDate(date: Date) {
     if (noResults) noResults.style.display = visible === 0 ? '' : 'none';
   }
 
-  // Re-run filter when language switches so search stays accurate
-  const html = document.documentElement;
-  const observer = new MutationObserver(() => {
-    const activeTag = (document.querySelector('.tag.active') as HTMLElement)?.dataset.tag;
-    filterPosts(activeTag, getCurrentSearch());
-  });
-  observer.observe(html, { attributes: true, attributeFilter: ['data-lang'] });
+  function getCurrentSearch(): string {
+    return (document.querySelector('.search-input') as HTMLInputElement)?.value?.toLowerCase() ?? '';
+  }
+
+  function initIndexPage() {
+    // ── Tag filter ────────────────────────────────────────
+    document.querySelectorAll('.tag').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        const tag = (btn as HTMLElement).dataset.tag;
+        filterPosts(tag, getCurrentSearch());
+      });
+    });
+
+    // Re-run filter when language switches so search stays accurate
+    const observer = new MutationObserver(() => {
+      const activeTag = (document.querySelector('.tag.active') as HTMLElement)?.dataset.tag;
+      filterPosts(activeTag, getCurrentSearch());
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-lang'] });
+  }
+
+  document.addEventListener('astro:page-load', initIndexPage);
 </script>

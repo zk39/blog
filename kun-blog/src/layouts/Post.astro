@@ -22,7 +22,7 @@ const dateEn = new Date(frontmatter.date).toLocaleDateString('en-US', {
   year: 'numeric', month: 'long', day: 'numeric'
 });
 ---
-<Base title={frontmatter.title} description={frontmatter.description}>
+<Base title={frontmatter.title} description={frontmatter.description} navVariant="side">
   <article class="article-view">
     <a href="/" class="article-back">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
@@ -54,7 +54,7 @@ const dateEn = new Date(frontmatter.date).toLocaleDateString('en-US', {
 
 <style>
   .article-view {
-    padding: 48px max(24px, calc((100vw - var(--max-width)) / 2)) 80px;
+    padding: 48px max(24px, calc((100vw - var(--nav-offset) - var(--max-width)) / 2)) 80px;
     animation: fadeIn 0.4s ease;
   }
 

@@ -5,7 +5,7 @@ import { getCollection } from 'astro:content';
 const allEntries = await getCollection('emba');
 
 const coreOrder = ['BUS 7000','BUS 7200','BUS 7500','BUS 7600','BUS 7800','BUS 8500','BUS 7700'];
-const itOrder   = ['IT 7003','IT 8000','IT 8003','IT 8100'];
+const itOrder   = ['IT 7000','IT 7003','IT 8000','IT 8003','IT 8100'];
 
 const core = allEntries
   .filter(e => e.data.category === 'core' && coreOrder.includes(e.data.course_code))

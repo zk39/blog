@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Submit a Support Ticket — IT Helpdesk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EEF1F4;
+    --surface: #FFFFFF;
+    --ink: #1B2430;
+    --muted: #5B6472;
+    --line: #DCE2E7;
+    --accent: #0F7173;
+    --accent-tint: #DCEEEE;
+    --accent-ink: #0A4F50;
+    --low: #3B6ED9;
+    --low-tint: #E3EAFB;
+    --med: #C2660B;
+    --med-tint: #FBEBD8;
+    --high: #C13333;
+    --high-tint: #FBE2E2;
+    --radius: 10px;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 28px 24px 80px;
+  }
+  .crumb {
+    margin-bottom: 20px;
+  }
+  .crumb a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .crumb a:hover { color: var(--accent-ink); }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-ink);
+    background: var(--accent-tint);
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 700;
+    margin: 0 0 8px;
+    letter-spacing: -0.01em;
+  }
+  .subhead {
+    color: var(--muted);
+    font-size: 16px;
+    margin: 0 0 40px;
+    max-width: 520px;
+    line-height: 1.5;
+  }
+  .layout {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  form {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 32px;
+  }
+  .field {
+    margin-bottom: 22px;
+  }
+  .field:last-of-type {
+    margin-bottom: 0;
+  }
+  label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 7px;
+    color: var(--ink);
+  }
+  .hint {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 400;
+    margin-left: 6px;
+  }
+  input[type="text"],
+  input[type="email"],
+  select,
+  textarea {
+    width: 100%;
+    font-family: var(--font-body);
+    font-size: 14px;
+    color: var(--ink);
+    background: #FBFCFD;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 11px 13px;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  input::placeholder, textarea::placeholder {
+    color: #9AA3AE;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: #FFFFFF;
+  }
+  input:focus-visible, select:focus-visible, textarea:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 110px;
+    line-height: 1.5;
+  }
+  .row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .priority-group {
+    display: flex;
+    gap: 8px;
+  }
+  .priority-pill {
+    flex: 1;
+    position: relative;
+  }
+  .priority-pill input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    cursor: pointer;
+  }
+  .priority-pill span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .priority-pill span::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.5;
+  }
+  .priority-pill[data-level="low"] span { color: var(--low); }
+  .priority-pill[data-level="medium"] span { color: var(--med); }
+  .priority-pill[data-level="high"] span { color: var(--high); }
+  .priority-pill input:checked + span {
+    border-color: currentColor;
+  }
+  .priority-pill[data-level="low"] input:checked + span { background: var(--low-tint); }
+  .priority-pill[data-level="medium"] input:checked + span { background: var(--med-tint); }
+  .priority-pill[data-level="high"] input:checked + span { background: var(--high-tint); }
+  .priority-pill input:focus-visible + span {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+  .submit-row {
+    margin-top: 30px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  button[type="submit"] {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 14px;
+    color: #fff;
+    background: var(--accent);
+    border: none;
+    border-radius: 8px;
+    padding: 13px 22px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  button[type="submit"]:hover { background: var(--accent-ink); }
+  button[type="submit"]:active { transform: translateY(1px); }
+  button[type="submit"]:focus-visible {
+    outline: 2px solid var(--accent-ink);
+    outline-offset: 2px;
+  }
+  button[type="submit"]:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+  .submit-note {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  /* ---- Ticket preview panel ---- */
+  .preview {
+    background: #14202B;
+    color: #E7EDF2;
+    border-radius: var(--radius);
+    padding: 26px 26px 24px;
+    position: sticky;
+    top: 32px;
+    overflow: hidden;
+  }
+  .preview-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .preview-label {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #7C93A3;
+  }
+  .status-badge {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(255,255,255,0.08);
+    color: #9FE6C6;
+    border: 1px solid rgba(159,230,198,0.3);
+  }
+  .ticket-id {
+    font-family: var(--font-mono);
+    font-size: 22px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    margin-bottom: 22px;
+    color: #ffffff;
+  }
+  .ticket-id .blink {
+    display: inline-block;
+    width: 9px;
+    color: var(--accent);
+    animation: blink 1.1s steps(1) infinite;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+  .preview-field {
+    padding: 12px 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .preview-field:first-of-type { border-top: none; padding-top: 0; }
+  .preview-field-label {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #7C93A3;
+    margin-bottom: 5px;
+  }
+  .preview-field-value {
+    font-size: 14px;
+    color: #E7EDF2;
+    line-height: 1.4;
+    word-break: break-word;
+  }
+  .preview-field-value.empty {
+    color: #566472;
+    font-style: italic;
+  }
+  .preview-field-value .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .tag.low { background: rgba(59,110,217,0.18); color: #8FB0F5; }
+  .tag.medium { background: rgba(194,102,11,0.2); color: #F0AE68; }
+  .tag.high { background: rgba(193,51,51,0.2); color: #F09B9B; }
+  .preview-footer {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed rgba(255,255,255,0.15);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #566472;
+    display: flex;
+    justify-content: space-between;
+  }
+  /* success state */
+  .success-overlay {
+    position: absolute;
+    inset: 0;
+    background: #14202B;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 24px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+  }
+  .success-overlay.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .success-check {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(159,230,198,0.12);
+    border: 1px solid rgba(159,230,198,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+  }
+  .success-overlay h3 {
+    font-family: var(--font-display);
+    font-size: 17px;
+    margin: 0 0 6px;
+    color: #fff;
+  }
+  .success-overlay p {
+    font-size: 13px;
+    color: #9FB0BE;
+    margin: 0 0 4px;
+    max-width: 260px;
+  }
+  .success-overlay .redirect-note {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: #566472;
+    margin-top: 14px;
+  }
+  .success-overlay .redirect-note a {
+    color: #9FE6C6;
+  }
+  @media (max-width: 800px) {
+    .layout { grid-template-columns: 1fr; }
+    .preview { position: static; order: -1; }
+    .row-2 { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ticket-id .blink { animation: none; }
+    * { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="crumb"><a href="/emba/it7000-systems-analytics-enterprise-management">&larr; Back to IT 7000 case study</a></div>
+  <span class="eyebrow">IT Helpdesk · New Request</span>
+  <h1>Submit a support ticket</h1>
+  <p class="subhead">Tell us what's going on. Your ticket lands directly in the technician queue, and you'll get status updates as it moves.</p>
+  <div class="layout">
+    <form id="ticketForm" novalidate>
+      <div class="field">
+        <label for="name">Full name</label>
+        <input type="text" id="name" name="name" placeholder="Jordan Reyes" required autocomplete="name">
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label for="email">Work email</label>
+          <input type="email" id="email" name="email" placeholder="jordan.reyes@company.com" required autocomplete="email">
+        </div>
+        <div class="field">
+          <label for="category">Category</label>
+          <select id="category" name="category" required>
+            <option value="" disabled selected>Select one</option>
+            <option value="Hardware">Hardware</option>
+            <option value="Software">Software</option>
+            <option value="Network / Wi-Fi">Network / Wi-Fi</option>
+            <option value="Account / Access">Account / Access</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Priority <span class="hint">how urgent is this?</span></label>
+        <div class="priority-group">
+          <label class="priority-pill" data-level="low">
+            <input type="radio" name="priority" value="Low" required>
+            <span>Low</span>
+          </label>
+          <label class="priority-pill" data-level="medium">
+            <input type="radio" name="priority" value="Medium" required>
+            <span>Medium</span>
+          </label>
+          <label class="priority-pill" data-level="high">
+            <input type="radio" name="priority" value="High" required>
+            <span>High</span>
+          </label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" name="subject" placeholder="Short summary of the issue" required maxlength="80">
+      </div>
+      <div class="field">
+        <label for="description">Description <span class="hint">what happened, and what have you tried?</span></label>
+        <textarea id="description" name="description" placeholder="e.g. Outlook won't sync since this morning. Restarted the app twice, still stuck on 'Connecting...'" required></textarea>
+      </div>
+      <div class="submit-row">
+        <button type="submit" id="submitBtn">Submit ticket →</button>
+        <span class="submit-note">A technician typically responds within 1 business day.</span>
+      </div>
+    </form>
+    <aside class="preview" id="preview">
+      <div class="preview-top">
+        <span class="preview-label">Ticket Preview</span>
+        <span class="status-badge" id="statusBadge">Draft</span>
+      </div>
+      <div class="ticket-id"><span id="ticketId">TCK-2026-0714</span><span class="blink">_</span></div>
+      <div class="preview-field">
+        <div class="preview-field-label">Submitted by</div>
+        <div class="preview-field-value empty" id="pvName">—</div>
+      </div>
+      <div class="preview-field">
+        <div class="preview-field-label">Category</div>
+        <div class="preview-field-value empty" id="pvCategory">—</div>
+      </div>
+      <div class="preview-field">
+        <div class="preview-field-label">Priority</div>
+        <div class="preview-field-value empty" id="pvPriority">—</div>
+      </div>
+      <div class="preview-field">
+        <div class="preview-field-label">Subject</div>
+        <div class="preview-field-value empty" id="pvSubject">—</div>
+      </div>
+      <div class="preview-footer">
+        <span id="pvTimestamp">not yet submitted</span>
+        <span>v1.0</span>
+      </div>
+      <div class="success-overlay" id="successOverlay">
+        <div class="success-check">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#9FE6C6" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <h3>Ticket submitted</h3>
+        <p>We've logged your request and notified the helpdesk queue. Check your email for updates.</p>
+        <p class="redirect-note" id="redirectNote">Redirecting to your confirmation… <a href="ticket-submitted.html" id="redirectLink">continue now</a></p>
+      </div>
+    </aside>
+  </div>
+</div>
+<script>
+  function genTicketId() {
+    const n = Math.floor(1000 + Math.random() * 9000);
+    return 'TCK-2026-' + n;
+  }
+  const ticketId = genTicketId();
+  document.getElementById('ticketId').textContent = ticketId;
+  const form = document.getElementById('ticketForm');
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const categoryInput = document.getElementById('category');
+  const subjectInput = document.getElementById('subject');
+  const descriptionInput = document.getElementById('description');
+  const priorityInputs = document.querySelectorAll('input[name="priority"]');
+  function setField(el, value, isEmpty) {
+    el.textContent = value;
+    el.classList.toggle('empty', isEmpty);
+  }
+  nameInput.addEventListener('input', () => {
+    setField(document.getElementById('pvName'), nameInput.value || '—', !nameInput.value);
+  });
+  categoryInput.addEventListener('change', () => {
+    setField(document.getElementById('pvCategory'), categoryInput.value || '—', !categoryInput.value);
+  });
+  subjectInput.addEventListener('input', () => {
+    setField(document.getElementById('pvSubject'), subjectInput.value || '—', !subjectInput.value);
+  });
+  priorityInputs.forEach(input => {
+    input.addEventListener('change', () => {
+      const level = input.value;
+      const cls = level.toLowerCase();
+      document.getElementById('pvPriority').innerHTML = `<span class="tag ${cls}">${level}</span>`;
+      document.getElementById('pvPriority').classList.remove('empty');
+    });
+  });
+
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
+    const priorityEl = form.querySelector('input[name="priority"]:checked');
+    const now = new Date();
+
+    const ticketData = {
+      id: ticketId,
+      name: nameInput.value,
+      email: emailInput.value,
+      category: categoryInput.value,
+      priority: priorityEl ? priorityEl.value : '',
+      subject: subjectInput.value,
+      description: descriptionInput.value,
+      submittedAt: now.toISOString(),
+    };
+
+    try {
+      localStorage.setItem('lastTicket', JSON.stringify(ticketData));
+    } catch (err) {
+      // localStorage unavailable — fall back to passing the ticket via the URL
+      const params = new URLSearchParams({ t: JSON.stringify(ticketData) });
+      document.getElementById('redirectLink').href = 'ticket-submitted.html?' + params.toString();
+    }
+
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('statusBadge').textContent = 'Submitted';
+    document.getElementById('pvTimestamp').textContent = 'submitted ' + now.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    document.getElementById('successOverlay').classList.add('show');
+
+    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.setTimeout(() => {
+      window.location.href = document.getElementById('redirectLink').href;
+    }, prefersReduced ? 200 : 1400);
+  });
+</script>
+</body>
+</html>

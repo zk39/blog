@@ -1,33 +1,63 @@
 ---
+interface Props {
+  variant?: 'top' | 'side';
+}
+
+const { variant = 'top' } = Astro.props;
 ---
-<nav>
-  <a href="/" class="nav-brand">Kun Zhang</a>
-  <div class="nav-links">
-    <a href="/"><span class="lang-zh">文章</span><span class="lang-en">Posts</span></a>
-    <a href="/about" class="hide-mobile"><span class="lang-zh">关于</span><span class="lang-en">About</span></a>
-    <a href="/friends"><span class="lang-zh">友链</span><span class="lang-en">Friends</span></a>
-    <a href="/emba" class="hide-mobile"><span class="lang-zh">作品集</span><span class="lang-en">Portfolio</span></a>
-    <button class="lang-toggle" id="lang-toggle" aria-label="Switch language">
-      <span class="lang-zh-label">中</span>
-      <span class="lang-divider">/</span>
-      <span class="lang-en-label">EN</span>
+<nav data-variant={variant} data-component="site-nav" transition:name="site-nav">
+  <div class="nav-inner">
+    <a href="/" class="nav-brand" aria-label="Kun Zhang">
+      <span class="brand-full">Kun Zhang</span>
+      <span class="brand-mono">K</span>
+    </a>
+
+    <button class="nav-toggle" id="nav-toggle" aria-label="打开菜单" aria-expanded="false" aria-controls="nav-links">
+      <span class="bar"></span>
+      <span class="bar"></span>
+      <span class="bar"></span>
     </button>
-    <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">
-      <span class="theme-icon">☀️</span>
-    </button>
+
+    <div class="nav-links" id="nav-links">
+      <a href="/" class="nav-link" data-key="posts">
+        <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>
+        <span class="nav-label"><span class="lang-zh">文章</span><span class="lang-en">Posts</span></span>
+      </a>
+      <a href="/about" class="nav-link" data-key="about">
+        <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <span class="nav-label"><span class="lang-zh">关于</span><span class="lang-en">About</span></span>
+      </a>
+      <a href="/friends" class="nav-link" data-key="friends">
+        <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        <span class="nav-label"><span class="lang-zh">友链</span><span class="lang-en">Friends</span></span>
+      </a>
+      <a href="/emba" class="nav-link" data-key="emba">
+        <svg class="nav-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        <span class="nav-label"><span class="lang-zh">作品集</span><span class="lang-en">Portfolio</span></span>
+      </a>
+
+      <div class="nav-controls">
+        <button class="lang-toggle" id="lang-toggle" aria-label="Switch language">
+          <span class="lang-zh-label">中</span>
+          <span class="lang-divider">/</span>
+          <span class="lang-en-label">EN</span>
+        </button>
+        <button class="theme-toggle" id="theme-toggle" aria-label="切换主题">
+          <span class="theme-icon">☀️</span>
+        </button>
+      </div>
+    </div>
   </div>
+
+  <button class="nav-scrim" id="nav-scrim" aria-hidden="true" tabindex="-1"></button>
 </nav>
 
 <style>
+  /* ── Base (mobile-first): compact top bar + hamburger drawer ── */
   nav {
     position: sticky;
     top: 0;
     z-index: 100;
-    height: var(--nav-height);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 max(24px, calc((100vw - var(--max-width)) / 2));
     background: color-mix(in srgb, var(--bg) 85%, transparent);
     backdrop-filter: blur(16px) saturate(1.4);
     -webkit-backdrop-filter: blur(16px) saturate(1.4);
@@ -35,34 +65,135 @@
     transition: background var(--transition), border-color var(--transition);
   }
 
+  .nav-inner {
+    height: var(--nav-height);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 max(20px, calc((100vw - var(--max-width)) / 2));
+  }
+
   .nav-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+
+  .brand-full {
     font-family: var(--font-display);
     font-weight: 700;
     font-size: 1.25rem;
     color: var(--text-primary);
-    text-decoration: none;
     letter-spacing: -0.02em;
   }
 
-  .nav-links {
-    display: flex;
+  .brand-mono {
+    display: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1rem;
     align-items: center;
-    gap: 8px;
+    justify-content: center;
   }
 
-  .nav-links a {
+  .nav-toggle {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 38px;
+    height: 38px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-card);
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .nav-toggle .bar {
+    width: 16px;
+    height: 2px;
+    margin: 0 auto;
+    background: var(--text-secondary);
+    border-radius: 1px;
+    transition: transform var(--transition), opacity var(--transition);
+  }
+
+  nav.drawer-open .nav-toggle .bar:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+  nav.drawer-open .nav-toggle .bar:nth-child(2) { opacity: 0; }
+  nav.drawer-open .nav-toggle .bar:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(78vw, 300px);
+    background: var(--bg);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: calc(var(--nav-height) + 16px) 20px 24px;
+    transform: translateX(100%);
+    transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 101;
+    overflow-y: auto;
+  }
+
+  nav.drawer-open .nav-links { transform: translateX(0); }
+
+  .nav-scrim {
+    display: none;
+    position: fixed;
+    inset: 0;
+    border: none;
+    background: rgba(0, 0, 0, 0.32);
+    z-index: 99;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--transition);
+    padding: 0;
+  }
+
+  nav.drawer-open .nav-scrim {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
     color: var(--text-secondary);
     text-decoration: none;
-    font-size: 0.9rem;
+    font-size: 0.98rem;
     font-weight: 500;
-    padding: 6px 14px;
+    padding: 12px 10px;
     border-radius: 8px;
     transition: all var(--transition);
   }
 
-  .nav-links a:hover {
-    color: var(--text-primary);
-    background: var(--bg-secondary);
+  .nav-link:hover { color: var(--text-primary); background: var(--bg-secondary); }
+
+  .nav-icon { flex-shrink: 0; }
+
+  .nav-label { position: static; opacity: 1; transform: none; }
+
+  .nav-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
   }
 
   .lang-toggle {
@@ -79,7 +210,6 @@
     font-weight: 600;
     color: var(--text-secondary);
     transition: all var(--transition);
-    margin-left: 4px;
     letter-spacing: 0.01em;
   }
 
@@ -89,14 +219,10 @@
     color: var(--text-primary);
   }
 
-  /* 当前激活语言高亮 */
   html[data-lang="zh"] .lang-toggle .lang-zh-label { color: var(--accent); }
   html[data-lang="en"] .lang-toggle .lang-en-label { color: var(--accent); }
 
-  .lang-divider {
-    color: var(--border);
-    margin: 0 1px;
-  }
+  .lang-divider { color: var(--border); margin: 0 1px; }
 
   .theme-toggle {
     width: 38px;
@@ -110,7 +236,6 @@
     justify-content: center;
     font-size: 1.1rem;
     transition: all var(--transition);
-    margin-left: 4px;
     color: var(--text-secondary);
   }
 
@@ -120,41 +245,158 @@
     transform: scale(1.05);
   }
 
-  @media (max-width: 640px) {
-    .hide-mobile { display: none; }
+  /* ── Tablet and up: classic horizontal bar, no drawer ── */
+  @media (min-width: 641px) {
+    .nav-toggle { display: none; }
+    .nav-scrim { display: none !important; }
+
+    .nav-links {
+      position: static;
+      flex-direction: row;
+      align-items: center;
+      width: auto;
+      background: transparent;
+      border-left: none;
+      padding: 0;
+      gap: 8px;
+      transform: none;
+      overflow: visible;
+    }
+
+    .nav-link { padding: 6px 14px; font-size: 0.9rem; }
+    .nav-icon { display: none; }
+
+    .nav-controls {
+      margin-top: 0;
+      padding-top: 0;
+      border-top: none;
+      margin-left: 4px;
+    }
+  }
+
+  @media (min-width: 641px) and (max-width: 899px) {
+    [data-key="about"], [data-key="emba"] { display: none; }
+  }
+
+  /* ── Wide screens + reading pages: nav morphs into a left icon rail ── */
+  @media (min-width: 900px) {
+    nav[data-variant="side"] {
+      position: fixed;
+      inset: 0 auto 0 0;
+      width: var(--nav-side-width);
+      border-bottom: none;
+      border-right: 1px solid var(--border);
+    }
+
+    nav[data-variant="side"] .nav-inner {
+      height: 100%;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 20px 0;
+      gap: 28px;
+    }
+
+    nav[data-variant="side"] .brand-full { display: none; }
+    nav[data-variant="side"] .brand-mono { display: flex; }
+
+    nav[data-variant="side"] .nav-links {
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      justify-content: flex-start;
+    }
+
+    nav[data-variant="side"] .nav-link {
+      position: relative;
+      padding: 10px;
+    }
+
+    nav[data-variant="side"] .nav-icon { display: block; }
+
+    nav[data-variant="side"] .nav-label {
+      position: absolute;
+      left: 100%;
+      top: 50%;
+      margin-left: 12px;
+      transform: translateY(-50%) translateX(-4px);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      font-size: 0.82rem;
+      box-shadow: var(--shadow-md);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    nav[data-variant="side"] .nav-link:hover .nav-label,
+    nav[data-variant="side"] .nav-link:focus-visible .nav-label {
+      opacity: 1;
+      transform: translateY(-50%) translateX(0);
+    }
+
+    nav[data-variant="side"] .nav-controls {
+      flex-direction: column;
+      margin-top: 0;
+    }
   }
 </style>
 
 <script>
-  // ── Theme ──────────────────────────────────────────────
-  function initTheme() {
-    const saved = localStorage.getItem('theme');
-    const preferred = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-    const theme = saved || preferred;
-    document.documentElement.setAttribute('data-theme', theme);
-    updateThemeIcon(theme);
+  function initNav() {
+    // ── Theme ──────────────────────────────────────────────
+    function updateThemeIcon(theme: string) {
+      const icon = document.querySelector('.theme-icon');
+      if (icon) icon.textContent = theme === 'light' ? '☀️' : '🌙';
+    }
+
+    const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+    updateThemeIcon(currentTheme);
+
+    document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+      updateThemeIcon(next);
+    });
+
+    // ── Language ───────────────────────────────────────────
+    document.getElementById('lang-toggle')?.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-lang') || 'zh';
+      const next = current === 'zh' ? 'en' : 'zh';
+      document.documentElement.setAttribute('data-lang', next);
+      localStorage.setItem('lang', next);
+    });
+
+    // ── Mobile drawer ──────────────────────────────────────
+    const nav = document.querySelector('nav[data-component="site-nav"]');
+    const toggle = document.getElementById('nav-toggle');
+    const scrim = document.getElementById('nav-scrim');
+    const links = document.getElementById('nav-links');
+
+    function closeDrawer() {
+      nav?.classList.remove('drawer-open');
+      toggle?.setAttribute('aria-expanded', 'false');
+    }
+    function openDrawer() {
+      nav?.classList.add('drawer-open');
+      toggle?.setAttribute('aria-expanded', 'true');
+    }
+
+    toggle?.addEventListener('click', () => {
+      nav?.classList.contains('drawer-open') ? closeDrawer() : openDrawer();
+    });
+    scrim?.addEventListener('click', closeDrawer);
+    links?.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeDrawer));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeDrawer();
+    });
   }
 
-  function updateThemeIcon(theme: string) {
-    const icon = document.querySelector('.theme-icon');
-    if (icon) icon.textContent = theme === 'light' ? '☀️' : '🌙';
-  }
-
-  initTheme();
-
-  document.getElementById('theme-toggle')?.addEventListener('click', () => {
-    const current = document.documentElement.getAttribute('data-theme');
-    const next = current === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', next);
-    localStorage.setItem('theme', next);
-    updateThemeIcon(next);
-  });
-
-  // ── Language ───────────────────────────────────────────
-  document.getElementById('lang-toggle')?.addEventListener('click', () => {
-    const current = document.documentElement.getAttribute('data-lang') || 'zh';
-    const next = current === 'zh' ? 'en' : 'zh';
-    document.documentElement.setAttribute('data-lang', next);
-    localStorage.setItem('lang', next);
-  });
+  document.addEventListener('astro:page-load', initNav);
 </script>

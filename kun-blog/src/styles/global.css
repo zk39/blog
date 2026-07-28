@@ -26,6 +26,8 @@
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --max-width: 720px;
   --nav-height: 64px;
+  --nav-side-width: 68px;
+  --nav-offset: 0px;
 }
 
 [data-theme="dark"] {
@@ -73,3 +75,25 @@ body {
 /* ── Bilingual lang visibility ──────────────────────────── */
 html[data-lang="zh"] .lang-en { display: none !important; }
 html[data-lang="en"] .lang-zh { display: none !important; }
+
+/* ── Side nav layout shift (wide screens, reading pages) ── */
+@media (min-width: 900px) {
+  body.nav-side {
+    padding-left: var(--nav-side-width);
+    --nav-offset: var(--nav-side-width);
+  }
+}
+
+/* ── View Transitions: let the nav morph, keep page content a simple cross-fade ── */
+::view-transition-group(site-nav) {
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(site-nav),
+  ::view-transition-old(site-nav),
+  ::view-transition-new(site-nav) {
+    animation: none !important;
+  }
+}

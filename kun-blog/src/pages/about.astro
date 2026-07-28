@@ -146,14 +146,19 @@ import Base from '../layouts/Base.astro';
     body.appendChild(tail);
   }
 
-  run();
+  function initAboutTerminal() {
+    gen = 0;
+    run();
 
-  const mo = new MutationObserver((muts) => {
-    for (const m of muts) {
-      if (m.attributeName === 'data-lang') { run(); break; }
-    }
-  });
-  mo.observe(document.documentElement, { attributes: true });
+    const mo = new MutationObserver((muts) => {
+      for (const m of muts) {
+        if (m.attributeName === 'data-lang') { run(); break; }
+      }
+    });
+    mo.observe(document.documentElement, { attributes: true });
+  }
+
+  document.addEventListener('astro:page-load', initAboutTerminal);
 </script>
 
 <style is:global>

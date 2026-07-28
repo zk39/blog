@@ -22,7 +22,7 @@ const categoryLabel = category === 'core' ? 'BUS Core Course' : 'IT Concentratio
 const categoryColor = category === 'core' ? 'var(--accent)' : '#10b981';
 ---
 
-<Base title={`${course_code} – ${title}`} description={description}>
+<Base title={`${course_code} – ${title}`} description={description} navVariant="side">
   <article class="essay-view">
 
     <div class="essay-nav">
@@ -67,7 +67,7 @@ const categoryColor = category === 'core' ? 'var(--accent)' : '#10b981';
 
 <style>
   .essay-view {
-    padding: 48px max(24px, calc((100vw - var(--max-width)) / 2)) 80px;
+    padding: 48px max(24px, calc((100vw - var(--nav-offset) - var(--max-width)) / 2)) 80px;
     animation: fadeIn 0.4s ease;
   }
 
